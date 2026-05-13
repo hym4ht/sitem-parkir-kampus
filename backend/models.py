@@ -48,6 +48,19 @@ class User(Base):
     vehicles = relationship("Vehicle", back_populates="user", cascade="all, delete-orphan")
     parking_logs = relationship("ParkingLog", back_populates="user")
 
+    @property
+    def prodi_nama(self):
+        return self.prodi.nama if self.prodi else None
+
+    @property
+    def semester(self):
+        if self.angkatan:
+            now = datetime.now()
+            # Simplistic 2 sem/year logic starting from Sept
+            months = (now.year - self.angkatan) * 12 + (now.month - 9)
+            return max(1, (months // 6) + 1)
+        return None
+
 class Prodi(Base):
     __tablename__ = "prodi"
 

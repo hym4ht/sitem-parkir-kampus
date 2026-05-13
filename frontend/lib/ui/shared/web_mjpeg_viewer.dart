@@ -18,7 +18,7 @@ class _WebMjpegViewerState extends State<WebMjpegViewer> {
   void initState() {
     super.initState();
     viewId = 'mjpeg-view-${DateTime.now().millisecondsSinceEpoch}';
-    
+
     // Use an IFrameElement with a custom HTML data URI to ensure the video
     // stream scales perfectly (BoxFit.cover equivalent) on any device without margins.
     final htmlContent = '''
@@ -28,7 +28,8 @@ class _WebMjpegViewerState extends State<WebMjpegViewer> {
         </body>
       </html>
     ''';
-    final dataUri = 'data:text/html;charset=utf-8,' + Uri.encodeComponent(htmlContent);
+    final dataUri =
+        'data:text/html;charset=utf-8,' + Uri.encodeComponent(htmlContent);
 
     ui_web.platformViewRegistry.registerViewFactory(
       viewId,

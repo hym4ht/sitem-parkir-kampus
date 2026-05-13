@@ -76,12 +76,14 @@ class AdminService {
   }
 }
 
-final mahasiswaListProvider = FutureProvider.autoDispose<List<dynamic>>((ref) async {
+final mahasiswaListProvider =
+    FutureProvider.autoDispose<List<dynamic>>((ref) async {
   final adminService = ref.watch(adminProvider);
   return adminService.getMahasiswa();
 });
 
-final petugasListProvider = FutureProvider.autoDispose<List<dynamic>>((ref) async {
+final petugasListProvider =
+    FutureProvider.autoDispose<List<dynamic>>((ref) async {
   final adminService = ref.watch(adminProvider);
   return adminService.getPetugas();
 });

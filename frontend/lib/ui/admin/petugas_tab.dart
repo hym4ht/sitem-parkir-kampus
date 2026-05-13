@@ -8,7 +8,7 @@ class PetugasTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final petugasList = ref.watch(petugasListProvider);
-    
+
     return Scaffold(
       body: petugasList.when(
         data: (data) => ListView.builder(
@@ -22,23 +22,30 @@ class PetugasTab extends ConsumerWidget {
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(color: Colors.grey.withOpacity(0.1)),
-                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 8, offset: const Offset(0, 2))],
+                boxShadow: [],
               ),
               child: Row(
                 children: [
                   Container(
                     padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(color: Colors.orange.withOpacity(0.1), shape: BoxShape.circle),
-                    child: const Icon(Icons.admin_panel_settings_rounded, color: Colors.orange),
+                    decoration: BoxDecoration(
+                        color: Colors.orange.withOpacity(0.1),
+                        shape: BoxShape.circle),
+                    child: const Icon(Icons.admin_panel_settings_rounded,
+                        color: Colors.orange),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(user['nama'] ?? '', style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+                        Text(user['nama'] ?? '',
+                            style: const TextStyle(
+                                fontWeight: FontWeight.w700, fontSize: 16)),
                         const SizedBox(height: 4),
-                        Text('NPP: ${user['nim_npp']}', style: TextStyle(color: Colors.grey[600], fontSize: 13)),
+                        Text('NPP: ${user['nim_npp']}',
+                            style: TextStyle(
+                                color: Colors.grey[600], fontSize: 13)),
                       ],
                     ),
                   ),
@@ -46,13 +53,16 @@ class PetugasTab extends ConsumerWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       IconButton(
-                        icon: const Icon(Icons.edit_rounded, color: Colors.blue, size: 20),
-                        onPressed: () => _showUserDialog(context, ref, user: user),
+                        icon: const Icon(Icons.edit_rounded,
+                            color: Colors.blue, size: 20),
+                        onPressed: () =>
+                            _showUserDialog(context, ref, user: user),
                         constraints: const BoxConstraints(),
                         padding: const EdgeInsets.all(8),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.delete_rounded, color: Colors.red, size: 20),
+                        icon: const Icon(Icons.delete_rounded,
+                            color: Colors.red, size: 20),
                         onPressed: () => _deleteUser(context, ref, user['id']),
                         constraints: const BoxConstraints(),
                         padding: const EdgeInsets.all(8),
@@ -74,7 +84,8 @@ class PetugasTab extends ConsumerWidget {
     );
   }
 
-  void _showUserDialog(BuildContext context, WidgetRef ref, {Map<String, dynamic>? user}) {
+  void _showUserDialog(BuildContext context, WidgetRef ref,
+      {Map<String, dynamic>? user}) {
     final isEdit = user != null;
     final nimController = TextEditingController(text: user?['nim_npp']);
     final namaController = TextEditingController(text: user?['nama']);
@@ -86,7 +97,8 @@ class PetugasTab extends ConsumerWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         child: Container(
           padding: const EdgeInsets.all(24),
-          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(24)),
+          decoration: BoxDecoration(
+              color: Colors.white, borderRadius: BorderRadius.circular(24)),
           child: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -96,27 +108,57 @@ class PetugasTab extends ConsumerWidget {
                   children: [
                     Container(
                       padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(color: Colors.orange.withOpacity(0.1), shape: BoxShape.circle),
-                      child: const Icon(Icons.admin_panel_settings_rounded, color: Colors.orange, size: 28),
+                      decoration: BoxDecoration(
+                          color: Colors.orange.withOpacity(0.1),
+                          shape: BoxShape.circle),
+                      child: const Icon(Icons.admin_panel_settings_rounded,
+                          color: Colors.orange, size: 28),
                     ),
                     const SizedBox(width: 16),
-                    Text(isEdit ? 'Edit Petugas' : 'Tambah Petugas', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800)),
+                    Text(isEdit ? 'Edit Petugas' : 'Tambah Petugas',
+                        style: const TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.w800)),
                   ],
                 ),
                 const SizedBox(height: 24),
-                const Text('NPP', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Colors.black54)),
-                const SizedBox(height: 8),
-                TextField(controller: nimController, decoration: InputDecoration(prefixIcon: const Icon(Icons.badge_rounded), border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)))),
-                const SizedBox(height: 16),
-                const Text('Nama Lengkap', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Colors.black54)),
-                const SizedBox(height: 8),
-                TextField(controller: namaController, decoration: InputDecoration(prefixIcon: const Icon(Icons.person_rounded), border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)))),
-                const SizedBox(height: 16),
-                Text(isEdit ? 'New Password (opsional)' : 'Password', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Colors.black54)),
+                const Text('NPP',
+                    style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
+                        color: Colors.black54)),
                 const SizedBox(height: 8),
                 TextField(
-                  controller: passwordController, 
-                  decoration: InputDecoration(prefixIcon: const Icon(Icons.lock_rounded), border: OutlineInputBorder(borderRadius: BorderRadius.circular(16))),
+                    controller: nimController,
+                    decoration: InputDecoration(
+                        prefixIcon: const Icon(Icons.badge_rounded),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16)))),
+                const SizedBox(height: 16),
+                const Text('Nama Lengkap',
+                    style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
+                        color: Colors.black54)),
+                const SizedBox(height: 8),
+                TextField(
+                    controller: namaController,
+                    decoration: InputDecoration(
+                        prefixIcon: const Icon(Icons.person_rounded),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16)))),
+                const SizedBox(height: 16),
+                Text(isEdit ? 'New Password (opsional)' : 'Password',
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
+                        color: Colors.black54)),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: passwordController,
+                  decoration: InputDecoration(
+                      prefixIcon: const Icon(Icons.lock_rounded),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16))),
                   obscureText: true,
                 ),
                 const SizedBox(height: 24),
@@ -125,41 +167,60 @@ class PetugasTab extends ConsumerWidget {
                     Expanded(
                       child: TextButton(
                         onPressed: () => Navigator.pop(context),
-                        style: TextButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)),
-                        child: const Text('Batal', style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w600)),
+                        style: TextButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 16)),
+                        child: const Text('Batal',
+                            style: TextStyle(
+                                color: Colors.grey,
+                                fontWeight: FontWeight.w600)),
                       ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16), backgroundColor: Colors.orange),
+                        style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            backgroundColor: Colors.orange),
                         onPressed: () async {
                           try {
                             final data = {
-                              if (nimController.text.isNotEmpty) 'nim_npp': nimController.text,
-                              if (namaController.text.isNotEmpty) 'nama': namaController.text,
-                              if (passwordController.text.isNotEmpty) 'password': passwordController.text,
+                              if (nimController.text.isNotEmpty)
+                                'nim_npp': nimController.text,
+                              if (namaController.text.isNotEmpty)
+                                'nama': namaController.text,
+                              if (passwordController.text.isNotEmpty)
+                                'password': passwordController.text,
                               'role': 'petugas',
                             };
-                            
+
                             if (!isEdit && passwordController.text.isEmpty) {
-                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Password wajib diisi untuk petugas baru')));
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text(
+                                          'Password wajib diisi untuk petugas baru')));
                               return;
                             }
 
                             if (isEdit) {
-                              await ref.read(adminProvider).updatePetugas(user['id'], data);
+                              await ref
+                                  .read(adminProvider)
+                                  .updatePetugas(user['id'], data);
                             } else {
                               await ref.read(adminProvider).createPetugas(data);
                             }
-                            
+
                             ref.invalidate(petugasListProvider);
                             if (context.mounted) Navigator.pop(context);
                           } catch (e) {
-                            if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+                            if (context.mounted)
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Error: $e')));
                           }
                         },
-                        child: const Text('Simpan', style: TextStyle(fontWeight: FontWeight.w700, color: Colors.white)),
+                        child: const Text('Simpan',
+                            style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white)),
                       ),
                     ),
                   ],
@@ -179,7 +240,9 @@ class PetugasTab extends ConsumerWidget {
         title: const Text('Hapus Petugas?'),
         content: const Text('Tindakan ini tidak bisa dibatalkan.'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Batal')),
+          TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Batal')),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () async {
@@ -188,7 +251,9 @@ class PetugasTab extends ConsumerWidget {
                 ref.invalidate(petugasListProvider);
                 if (context.mounted) Navigator.pop(context);
               } catch (e) {
-                if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+                if (context.mounted)
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text('Error: $e')));
               }
             },
             child: const Text('Hapus', style: TextStyle(color: Colors.white)),

@@ -1,10 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:dio/dio.dart';
-import '../../providers/auth_provider.dart';
 import '../../core/app_theme.dart';
-import '../auth/login_screen.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import '../../core/api_client.dart';
 import '../../core/constants.dart';
@@ -46,14 +43,15 @@ class _PetugasDashboardState extends ConsumerState<PetugasDashboard> {
 
   void _connectNotificationWS() {
     try {
-      _notifChannel = WebSocketChannel.connect(Uri.parse(AppConstants.wsNotifUrl));
+      _notifChannel =
+          WebSocketChannel.connect(Uri.parse(AppConstants.wsNotifUrl));
       _notifChannel!.stream.listen((message) {
         try {
           final decoded = jsonDecode(message);
           if (decoded['type'] == 'new_access_request') {
             // Trigger global refresh for all tabs
             ref.read(refreshTriggerProvider.notifier).state++;
-            
+
             // Increment badge immediately
             ref.read(pendingCountProvider.notifier).state++;
             // Show snackbar notification
@@ -62,7 +60,8 @@ class _PetugasDashboardState extends ConsumerState<PetugasDashboard> {
                 SnackBar(
                   content: Row(
                     children: [
-                      const Icon(Icons.notifications_active, color: Colors.white, size: 20),
+                      const Icon(Icons.notifications_active,
+                          color: Colors.white, size: 20),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
@@ -75,7 +74,8 @@ class _PetugasDashboardState extends ConsumerState<PetugasDashboard> {
                   backgroundColor: AppTheme.maroon,
                   behavior: SnackBarBehavior.floating,
                   duration: const Duration(seconds: 4),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
                   action: SnackBarAction(
                     label: 'LIHAT',
                     textColor: Colors.white,
@@ -103,7 +103,8 @@ class _PetugasDashboardState extends ConsumerState<PetugasDashboard> {
 
   Future<void> _refreshBadge() async {
     try {
-      final res = await ref.read(dioProvider).get('petugas/access-requests/pending');
+      final res =
+          await ref.read(dioProvider).get('petugas/access-requests/pending');
       final count = (res.data as List).length;
       ref.read(pendingCountProvider.notifier).state = count;
     } catch (_) {}
@@ -124,41 +125,64 @@ class _PetugasDashboardState extends ConsumerState<PetugasDashboard> {
               child: Row(
                 children: [
                   Container(
-                    width: 36, height: 36,
+                    width: 36,
+                    height: 36,
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.15),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(color: Colors.white.withOpacity(0.2)),
                     ),
-                    child: const Icon(Icons.local_parking, size: 18, color: Colors.white),
+                    child: const Icon(Icons.local_parking,
+                        size: 18, color: Colors.white),
                   ),
                   const SizedBox(width: 12),
                   const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('Command Center', style: TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w800, letterSpacing: -0.3)),
-                      Text('Smart Parking System', style: TextStyle(color: Colors.white60, fontSize: 11, fontWeight: FontWeight.w500)),
+                      Text('Command Center',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 17,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: -0.3)),
+                      Text('Smart Parking System',
+                          style: TextStyle(
+                              color: Colors.white60,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w500)),
                     ],
                   ),
                   const Spacer(),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Row(
                       children: [
-                        Container(width: 6, height: 6, decoration: const BoxDecoration(color: Colors.greenAccent, shape: BoxShape.circle)),
+                        Container(
+                            width: 6,
+                            height: 6,
+                            decoration: const BoxDecoration(
+                                color: Colors.greenAccent,
+                                shape: BoxShape.circle)),
                         const SizedBox(width: 6),
-                        const Text('ONLINE', style: TextStyle(color: Colors.greenAccent, fontSize: 10, fontWeight: FontWeight.w700, letterSpacing: 1)),
+                        const Text('ONLINE',
+                            style: TextStyle(
+                                color: Colors.greenAccent,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 1)),
                       ],
                     ),
                   ),
                   const SizedBox(width: 8),
                   IconButton(
-                    icon: const Icon(Icons.refresh_rounded, color: Colors.white70, size: 22),
+                    icon: const Icon(Icons.refresh_rounded,
+                        color: Colors.white70, size: 22),
                     onPressed: _refreshBadge,
                   ),
                 ],
@@ -181,7 +205,7 @@ class _PetugasDashboardState extends ConsumerState<PetugasDashboard> {
         decoration: BoxDecoration(
           color: Colors.white,
           border: Border(top: BorderSide(color: Colors.grey.withOpacity(0.08))),
-          boxShadow: [BoxShadow(color: AppTheme.maroon.withOpacity(0.06), blurRadius: 20, offset: const Offset(0, -4))],
+          boxShadow: [],
         ),
         child: SafeArea(
           child: Padding(
@@ -190,7 +214,8 @@ class _PetugasDashboardState extends ConsumerState<PetugasDashboard> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _buildNavItem(0, Icons.monitor_rounded, 'Monitor'),
-                _buildNavItemWithBadge(1, Icons.pending_actions_rounded, 'Permintaan', pendingCount),
+                _buildNavItemWithBadge(1, Icons.pending_actions_rounded,
+                    'Permintaan', pendingCount),
                 _buildNavItem(2, Icons.person_search_rounded, 'Cari'),
                 _buildNavItem(3, Icons.verified_rounded, 'STNK'),
                 _buildNavItem(4, Icons.account_circle_rounded, 'Profil'),
@@ -221,7 +246,9 @@ class _PetugasDashboardState extends ConsumerState<PetugasDashboard> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, size: 22, color: isSelected ? AppTheme.maroon : AppTheme.slate500),
+              Icon(icon,
+                  size: 22,
+                  color: isSelected ? AppTheme.maroon : AppTheme.slate500),
               const SizedBox(height: 4),
               Text(
                 label,
@@ -238,7 +265,8 @@ class _PetugasDashboardState extends ConsumerState<PetugasDashboard> {
     );
   }
 
-  Widget _buildNavItemWithBadge(int index, IconData icon, String label, int count) {
+  Widget _buildNavItemWithBadge(
+      int index, IconData icon, String label, int count) {
     final isSelected = _currentIndex == index;
     return Expanded(
       child: InkWell(
@@ -259,9 +287,13 @@ class _PetugasDashboardState extends ConsumerState<PetugasDashboard> {
             children: [
               Badge(
                 isLabelVisible: count > 0,
-                label: Text(count > 9 ? '9+' : count.toString(), style: const TextStyle(fontSize: 8, fontWeight: FontWeight.bold)),
+                label: Text(count > 9 ? '9+' : count.toString(),
+                    style: const TextStyle(
+                        fontSize: 8, fontWeight: FontWeight.bold)),
                 backgroundColor: AppTheme.maroon,
-                child: Icon(icon, size: 22, color: isSelected ? AppTheme.maroon : AppTheme.slate500),
+                child: Icon(icon,
+                    size: 22,
+                    color: isSelected ? AppTheme.maroon : AppTheme.slate500),
               ),
               const SizedBox(height: 4),
               Text(
@@ -286,7 +318,7 @@ class SessionStatsSummary extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(refreshTriggerProvider); // Rebuild & refetch on global refresh
-    
+
     return FutureBuilder(
       future: Future.wait([
         ref.read(dioProvider).get('petugas/session-stats'),
@@ -296,17 +328,24 @@ class SessionStatsSummary extends ConsumerWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Row(children: List.generate(3, (_) => Expanded(
-              child: Container(
-                height: 80,
-                margin: const EdgeInsets.symmetric(horizontal: 4),
-                decoration: BoxDecoration(color: AppTheme.slate100, borderRadius: BorderRadius.circular(16)),
-              ),
-            ))),
+            child: Row(
+                children: List.generate(
+                    3,
+                    (_) => Expanded(
+                          child: Container(
+                            height: 80,
+                            margin: const EdgeInsets.symmetric(horizontal: 4),
+                            decoration: BoxDecoration(
+                                color: AppTheme.slate100,
+                                borderRadius: BorderRadius.circular(16)),
+                          ),
+                        ))),
           );
         }
-        final stats = ((snapshot.data?[0] as dynamic)?.data ?? {"handled_count": 0, "pending_stnk": 0}) as Map<String, dynamic>;
-        final capData = ((snapshot.data?[1] as dynamic)?.data ?? {"parked": 0, "total": 100}) as Map<String, dynamic>;
+        final stats = ((snapshot.data?[0] as dynamic)?.data ??
+            {"handled_count": 0, "pending_stnk": 0}) as Map<String, dynamic>;
+        final capData = ((snapshot.data?[1] as dynamic)?.data ??
+            {"parked": 0, "total": 100}) as Map<String, dynamic>;
         final parked = (capData['parked'] ?? 0) as int;
         final total = (capData['total'] ?? 100) as int;
         final percent = (parked / total).clamp(0.0, 1.0);
@@ -319,7 +358,9 @@ class SessionStatsSummary extends ConsumerWidget {
                 icon: Icons.directions_car_filled_rounded,
                 label: 'Terisi',
                 value: '$parked/$total',
-                color: percent > 0.9 ? const Color(0xFFDC2626) : (percent > 0.7 ? AppTheme.amber : AppTheme.emerald),
+                color: percent > 0.9
+                    ? const Color(0xFFDC2626)
+                    : (percent > 0.7 ? AppTheme.amber : AppTheme.emerald),
                 progress: percent,
               ),
               const SizedBox(width: 10),
@@ -350,7 +391,12 @@ class _StatCard extends StatelessWidget {
   final String value;
   final Color color;
   final double? progress;
-  const _StatCard({required this.icon, required this.label, required this.value, required this.color, this.progress});
+  const _StatCard(
+      {required this.icon,
+      required this.label,
+      required this.value,
+      required this.color,
+      this.progress});
 
   @override
   Widget build(BuildContext context) {
@@ -361,7 +407,7 @@ class _StatCard extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(18),
           border: Border.all(color: color.withOpacity(0.08)),
-          boxShadow: [BoxShadow(color: color.withOpacity(0.08), blurRadius: 12, offset: const Offset(0, 4))],
+          boxShadow: [],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -372,7 +418,10 @@ class _StatCard extends StatelessWidget {
                   padding: const EdgeInsets.all(7),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [color.withOpacity(0.15), color.withOpacity(0.05)],
+                      colors: [
+                        color.withOpacity(0.15),
+                        color.withOpacity(0.05)
+                      ],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
@@ -381,16 +430,29 @@ class _StatCard extends StatelessWidget {
                   child: Icon(icon, size: 14, color: color),
                 ),
                 const Spacer(),
-                Text(label, style: TextStyle(fontSize: 10, color: AppTheme.slate500, fontWeight: FontWeight.w600)),
+                Text(label,
+                    style: TextStyle(
+                        fontSize: 10,
+                        color: AppTheme.slate500,
+                        fontWeight: FontWeight.w600)),
               ],
             ),
             const SizedBox(height: 10),
-            Text(value, style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: AppTheme.slate900, letterSpacing: -0.5)),
+            Text(value,
+                style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w900,
+                    color: AppTheme.slate900,
+                    letterSpacing: -0.5)),
             if (progress != null) ...[
               const SizedBox(height: 8),
               ClipRRect(
                 borderRadius: BorderRadius.circular(6),
-                child: LinearProgressIndicator(value: progress!, minHeight: 5, backgroundColor: color.withOpacity(0.08), color: color),
+                child: LinearProgressIndicator(
+                    value: progress!,
+                    minHeight: 5,
+                    backgroundColor: color.withOpacity(0.08),
+                    color: color),
               ),
             ],
           ],
@@ -490,7 +552,8 @@ class _LiveMonitorTabState extends ConsumerState<LiveMonitorTab> {
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Batal')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx), child: const Text('Batal')),
           if (_cameraUrl != null)
             TextButton(
               onPressed: () {
@@ -500,7 +563,8 @@ class _LiveMonitorTabState extends ConsumerState<LiveMonitorTab> {
                 });
                 Navigator.pop(ctx);
               },
-              child: const Text('Putuskan', style: TextStyle(color: Colors.red)),
+              child:
+                  const Text('Putuskan', style: TextStyle(color: Colors.red)),
             ),
           ElevatedButton.icon(
             style: ElevatedButton.styleFrom(backgroundColor: AppTheme.maroon),
@@ -514,7 +578,8 @@ class _LiveMonitorTabState extends ConsumerState<LiveMonitorTab> {
               Navigator.pop(ctx);
             },
             icon: const Icon(Icons.connected_tv, size: 16, color: Colors.white),
-            label: const Text('Hubungkan', style: TextStyle(color: Colors.white)),
+            label:
+                const Text('Hubungkan', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -541,47 +606,72 @@ class _LiveMonitorTabState extends ConsumerState<LiveMonitorTab> {
                 decoration: BoxDecoration(
                   color: const Color(0xFF0F172A),
                   borderRadius: BorderRadius.circular(20),
-                  boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 16, offset: const Offset(0, 4))],
+                  boxShadow: [],
                 ),
                 child: Column(
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 10),
                       decoration: const BoxDecoration(
                         color: Color(0xFF1E293B),
-                        borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(20),
+                            topRight: Radius.circular(20)),
                       ),
                       child: Row(
                         children: [
                           Container(
-                            width: 8, height: 8,
+                            width: 8,
+                            height: 8,
                             decoration: BoxDecoration(
-                              color: _showCamera && _cameraUrl != null ? Colors.greenAccent : const Color(0xFFEF4444),
+                              color: _showCamera && _cameraUrl != null
+                                  ? Colors.greenAccent
+                                  : const Color(0xFFEF4444),
                               shape: BoxShape.circle,
-                              boxShadow: [BoxShadow(color: (_showCamera ? Colors.greenAccent : const Color(0xFFEF4444)).withOpacity(0.6), blurRadius: 6)],
+                              boxShadow: [],
                             ),
                           ),
                           const SizedBox(width: 10),
                           Text(
-                            _showCamera && _cameraUrl != null ? 'LIVE — Gate Camera' : 'OFFLINE',
-                            style: TextStyle(color: _showCamera ? Colors.greenAccent : const Color(0xFF94A3B8), fontSize: 12, fontWeight: FontWeight.w700, letterSpacing: 0.5),
+                            _showCamera && _cameraUrl != null
+                                ? 'LIVE — Gate Camera'
+                                : 'OFFLINE',
+                            style: TextStyle(
+                                color: _showCamera
+                                    ? Colors.greenAccent
+                                    : const Color(0xFF94A3B8),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 0.5),
                           ),
                           const Spacer(),
                           GestureDetector(
                             onTap: _showCameraDialog,
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 5),
                               decoration: BoxDecoration(
                                 color: Colors.white.withOpacity(0.08),
                                 borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: Colors.white.withOpacity(0.1)),
+                                border: Border.all(
+                                    color: Colors.white.withOpacity(0.1)),
                               ),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Icon(_showCamera ? Icons.settings_rounded : Icons.videocam_rounded, color: const Color(0xFF94A3B8), size: 14),
+                                  Icon(
+                                      _showCamera
+                                          ? Icons.settings_rounded
+                                          : Icons.videocam_rounded,
+                                      color: const Color(0xFF94A3B8),
+                                      size: 14),
                                   const SizedBox(width: 5),
-                                  Text(_showCamera ? 'Setting' : 'Connect', style: const TextStyle(color: Color(0xFF94A3B8), fontSize: 11, fontWeight: FontWeight.w600)),
+                                  Text(_showCamera ? 'Setting' : 'Connect',
+                                      style: const TextStyle(
+                                          color: Color(0xFF94A3B8),
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.w600)),
                                 ],
                               ),
                             ),
@@ -594,17 +684,29 @@ class _LiveMonitorTabState extends ConsumerState<LiveMonitorTab> {
                       width: double.infinity,
                       child: _showCamera && _cameraUrl != null
                           ? ClipRRect(
-                              borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20)),
+                              borderRadius: const BorderRadius.only(
+                                  bottomLeft: Radius.circular(20),
+                                  bottomRight: Radius.circular(20)),
                               child: WebMjpegViewer(streamUrl: _cameraUrl!),
                             )
                           : const Center(
-                              child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                                Icon(Icons.videocam_outlined, color: Color(0xFF475569), size: 44),
-                                SizedBox(height: 10),
-                                Text('Kamera Belum Terhubung', style: TextStyle(color: Color(0xFF64748B), fontSize: 13, fontWeight: FontWeight.w600)),
-                                SizedBox(height: 4),
-                                Text('Tap "Connect" untuk menyambungkan', style: TextStyle(color: Color(0xFF475569), fontSize: 11)),
-                              ]),
+                              child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.videocam_outlined,
+                                        color: Color(0xFF475569), size: 44),
+                                    SizedBox(height: 10),
+                                    Text('Kamera Belum Terhubung',
+                                        style: TextStyle(
+                                            color: Color(0xFF64748B),
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w600)),
+                                    SizedBox(height: 4),
+                                    Text('Tap "Connect" untuk menyambungkan',
+                                        style: TextStyle(
+                                            color: Color(0xFF475569),
+                                            fontSize: 11)),
+                                  ]),
                             ),
                     ),
                   ],
@@ -619,16 +721,30 @@ class _LiveMonitorTabState extends ConsumerState<LiveMonitorTab> {
                   children: [
                     Container(
                       padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(color: AppTheme.emerald.withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
-                      child: const Icon(Icons.document_scanner_rounded, size: 16, color: AppTheme.emerald),
+                      decoration: BoxDecoration(
+                          color: AppTheme.emerald.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(8)),
+                      child: const Icon(Icons.document_scanner_rounded,
+                          size: 16, color: AppTheme.emerald),
                     ),
                     const SizedBox(width: 10),
-                    const Text('ALPR Output', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15, color: AppTheme.slate900)),
+                    const Text('ALPR Output',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w800,
+                            fontSize: 15,
+                            color: AppTheme.slate900)),
                     const Spacer(),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                      decoration: BoxDecoration(color: AppTheme.emerald.withOpacity(0.1), borderRadius: BorderRadius.circular(6)),
-                      child: Text('${logs.length} scan', style: const TextStyle(fontSize: 10, color: AppTheme.emerald, fontWeight: FontWeight.w700)),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                          color: AppTheme.emerald.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(6)),
+                      child: Text('${logs.length} scan',
+                          style: const TextStyle(
+                              fontSize: 10,
+                              color: AppTheme.emerald,
+                              fontWeight: FontWeight.w700)),
                     ),
                   ],
                 ),
@@ -645,11 +761,16 @@ class _LiveMonitorTabState extends ConsumerState<LiveMonitorTab> {
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: const Center(
-                    child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                      Icon(Icons.radar_rounded, size: 32, color: Color(0xFF334155)),
-                      SizedBox(height: 8),
-                      Text('Menunggu scan kendaraan...', style: TextStyle(color: Color(0xFF475569), fontSize: 12)),
-                    ]),
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.radar_rounded,
+                              size: 32, color: Color(0xFF334155)),
+                          SizedBox(height: 8),
+                          Text('Menunggu scan kendaraan...',
+                              style: TextStyle(
+                                  color: Color(0xFF475569), fontSize: 12)),
+                        ]),
                   ),
                 )
               else
@@ -667,17 +788,32 @@ class _LiveMonitorTabState extends ConsumerState<LiveMonitorTab> {
                         decoration: BoxDecoration(
                           color: const Color(0xFF0F172A),
                           borderRadius: BorderRadius.circular(14),
-                          border: Border.all(color: (isSuccess ? AppTheme.emerald : const Color(0xFFEF4444)).withOpacity(0.2)),
+                          border: Border.all(
+                              color: (isSuccess
+                                      ? AppTheme.emerald
+                                      : const Color(0xFFEF4444))
+                                  .withOpacity(0.2)),
                         ),
                         child: Row(
                           children: [
                             Container(
-                              width: 36, height: 36,
+                              width: 36,
+                              height: 36,
                               decoration: BoxDecoration(
-                                color: (isSuccess ? AppTheme.emerald : const Color(0xFFEF4444)).withOpacity(0.15),
+                                color: (isSuccess
+                                        ? AppTheme.emerald
+                                        : const Color(0xFFEF4444))
+                                    .withOpacity(0.15),
                                 borderRadius: BorderRadius.circular(10),
                               ),
-                              child: Icon(isSuccess ? Icons.check_rounded : Icons.close_rounded, color: isSuccess ? AppTheme.emerald : const Color(0xFFEF4444), size: 20),
+                              child: Icon(
+                                  isSuccess
+                                      ? Icons.check_rounded
+                                      : Icons.close_rounded,
+                                  color: isSuccess
+                                      ? AppTheme.emerald
+                                      : const Color(0xFFEF4444),
+                                  size: 20),
                             ),
                             const SizedBox(width: 12),
                             Expanded(
@@ -686,26 +822,42 @@ class _LiveMonitorTabState extends ConsumerState<LiveMonitorTab> {
                                 children: [
                                   Text(
                                     log['plate'] ?? 'UNKNOWN',
-                                    style: const TextStyle(fontFamily: 'Courier', fontWeight: FontWeight.w900, fontSize: 16, color: Colors.white, letterSpacing: 2),
+                                    style: const TextStyle(
+                                        fontFamily: 'Courier',
+                                        fontWeight: FontWeight.w900,
+                                        fontSize: 16,
+                                        color: Colors.white,
+                                        letterSpacing: 2),
                                   ),
                                   const SizedBox(height: 2),
                                   Text(
                                     '${log['message'] ?? '-'} • ${log['user'] ?? '-'}',
-                                    style: const TextStyle(fontSize: 11, color: Color(0xFF64748B)),
+                                    style: const TextStyle(
+                                        fontSize: 11, color: Color(0xFF64748B)),
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ],
                               ),
                             ),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4),
                               decoration: BoxDecoration(
-                                color: (isSuccess ? AppTheme.emerald : const Color(0xFFEF4444)).withOpacity(0.15),
+                                color: (isSuccess
+                                        ? AppTheme.emerald
+                                        : const Color(0xFFEF4444))
+                                    .withOpacity(0.15),
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               child: Text(
                                 isSuccess ? 'OK' : 'DENY',
-                                style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: isSuccess ? AppTheme.emerald : const Color(0xFFEF4444), letterSpacing: 1),
+                                style: TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w800,
+                                    color: isSuccess
+                                        ? AppTheme.emerald
+                                        : const Color(0xFFEF4444),
+                                    letterSpacing: 1),
                               ),
                             ),
                           ],
@@ -729,11 +881,18 @@ class _LiveMonitorTabState extends ConsumerState<LiveMonitorTab> {
                         children: [
                           Container(
                             padding: const EdgeInsets.all(6),
-                            decoration: BoxDecoration(color: AppTheme.tealLight, borderRadius: BorderRadius.circular(8)),
-                            child: const Icon(Icons.bar_chart_rounded, size: 16, color: AppTheme.teal),
+                            decoration: BoxDecoration(
+                                color: AppTheme.tealLight,
+                                borderRadius: BorderRadius.circular(8)),
+                            child: const Icon(Icons.bar_chart_rounded,
+                                size: 16, color: AppTheme.teal),
                           ),
                           const SizedBox(width: 10),
-                          const Text('Tren Parkir (7 Hari)', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15, color: AppTheme.slate900)),
+                          const Text('Tren Parkir (7 Hari)',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 15,
+                                  color: AppTheme.slate900)),
                         ],
                       ),
                       const SizedBox(height: 16),
@@ -741,7 +900,10 @@ class _LiveMonitorTabState extends ConsumerState<LiveMonitorTab> {
                     ],
                   ),
                 ),
-                loading: () => const Center(child: Padding(padding: EdgeInsets.all(20), child: CircularProgressIndicator())),
+                loading: () => const Center(
+                    child: Padding(
+                        padding: EdgeInsets.all(20),
+                        child: CircularProgressIndicator())),
                 error: (e, _) => const SizedBox.shrink(),
               ),
 
@@ -761,7 +923,7 @@ class _LiveMonitorTabState extends ConsumerState<LiveMonitorTab> {
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border(top: BorderSide(color: Colors.grey[200]!)),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, -2))],
+        boxShadow: [],
       ),
       child: Column(
         children: [
@@ -769,7 +931,11 @@ class _LiveMonitorTabState extends ConsumerState<LiveMonitorTab> {
             children: [
               Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 18),
               SizedBox(width: 8),
-              Text('Emergency Override', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.orange)),
+              Text('Emergency Override',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
+                      color: Colors.orange)),
             ],
           ),
           const SizedBox(height: 12),
@@ -778,18 +944,24 @@ class _LiveMonitorTabState extends ConsumerState<LiveMonitorTab> {
               Expanded(
                 child: ElevatedButton.icon(
                   onPressed: () => _handleEmergencyOpen('masuk'),
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.orange, foregroundColor: Colors.white),
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange,
+                      foregroundColor: Colors.white),
                   icon: const Icon(Icons.sensor_door, size: 18),
-                  label: const Text('Buka Gate Masuk', style: TextStyle(fontSize: 12)),
+                  label: const Text('Buka Gate Masuk',
+                      style: TextStyle(fontSize: 12)),
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: ElevatedButton.icon(
                   onPressed: () => _handleEmergencyOpen('keluar'),
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.orange, foregroundColor: Colors.white),
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange,
+                      foregroundColor: Colors.white),
                   icon: const Icon(Icons.sensor_door, size: 18),
-                  label: const Text('Buka Gate Keluar', style: TextStyle(fontSize: 12)),
+                  label: const Text('Buka Gate Keluar',
+                      style: TextStyle(fontSize: 12)),
                 ),
               ),
             ],
@@ -802,37 +974,46 @@ class _LiveMonitorTabState extends ConsumerState<LiveMonitorTab> {
   Future<void> _handleEmergencyOpen(String gate) async {
     final reasonController = TextEditingController();
     bool confirmed = await showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text('Peringatan: Emergency $gate'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text('Aksi ini akan membuka gerbang secara paksa dan dicatat oleh sistem.'),
-            const SizedBox(height: 16),
-            TextField(controller: reasonController, decoration: const InputDecoration(hintText: 'Alasan darurat...')),
-          ],
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Batal')),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            style: TextButton.styleFrom(foregroundColor: Colors.orange),
-            child: const Text('YA, BUKA GERBANG'),
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text('Peringatan: Emergency $gate'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                    'Aksi ini akan membuka gerbang secara paksa dan dicatat oleh sistem.'),
+                const SizedBox(height: 16),
+                TextField(
+                    controller: reasonController,
+                    decoration:
+                        const InputDecoration(hintText: 'Alasan darurat...')),
+              ],
+            ),
+            actions: [
+              TextButton(
+                  onPressed: () => Navigator.pop(ctx, false),
+                  child: const Text('Batal')),
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, true),
+                style: TextButton.styleFrom(foregroundColor: Colors.orange),
+                child: const Text('YA, BUKA GERBANG'),
+              ),
+            ],
           ),
-        ],
-      ),
-    ) ?? false;
+        ) ??
+        false;
 
     if (confirmed && mounted) {
       try {
-        await ref.read(dioProvider).post('gate/emergency-action', queryParameters: {
-          'gate': gate,
-          'reason': reasonController.text
-        });
-        if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Gate $gate berhasil dibuka manual')));
+        await ref.read(dioProvider).post('gate/emergency-action',
+            queryParameters: {'gate': gate, 'reason': reasonController.text});
+        if (mounted)
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Gate $gate berhasil dibuka manual')));
       } catch (e) {
-        if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Gagal: $e')));
+        if (mounted)
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text('Gagal: $e')));
       }
     }
   }
@@ -844,29 +1025,36 @@ class AccessRequestQueueTab extends ConsumerStatefulWidget {
   const AccessRequestQueueTab({super.key, this.onCountChanged});
 
   @override
-  ConsumerState<AccessRequestQueueTab> createState() => _AccessRequestQueueTabState();
+  ConsumerState<AccessRequestQueueTab> createState() =>
+      _AccessRequestQueueTabState();
 }
 
 class _AccessRequestQueueTabState extends ConsumerState<AccessRequestQueueTab> {
   Future<List<dynamic>> fetchPendingRequests() async {
-    final response = await ref.read(dioProvider).get('petugas/access-requests/pending');
+    final response =
+        await ref.read(dioProvider).get('petugas/access-requests/pending');
     return response.data;
   }
 
-  Future<void> _respond(int requestId, String action, {String catatan = ''}) async {
+  Future<void> _respond(int requestId, String action,
+      {String catatan = ''}) async {
     try {
       await ref.read(dioProvider).put(
         'petugas/access-requests/$requestId/respond',
         queryParameters: {'action': action, 'catatan': catatan},
       );
       if (mounted) {
-        final msg = action == 'disetujui' ? '✓ Disetujui, gate dibuka' : '✗ Permintaan ditolak';
+        final msg = action == 'disetujui'
+            ? '✓ Disetujui, gate dibuka'
+            : '✗ Permintaan ditolak';
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(msg),
-            backgroundColor: action == 'disetujui' ? Colors.green : AppTheme.maroon,
+            backgroundColor:
+                action == 'disetujui' ? Colors.green : AppTheme.maroon,
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           ),
         );
         widget.onCountChanged?.call();
@@ -874,7 +1062,8 @@ class _AccessRequestQueueTabState extends ConsumerState<AccessRequestQueueTab> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Error: $e')));
       }
     }
   }
@@ -893,7 +1082,8 @@ class _AccessRequestQueueTabState extends ConsumerState<AccessRequestQueueTab> {
       context: context,
       builder: (ctx) => StatefulBuilder(
         builder: (context, setStateDialog) => AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           title: const Row(
             children: [
               Icon(Icons.cancel_outlined, color: AppTheme.maroon),
@@ -906,23 +1096,31 @@ class _AccessRequestQueueTabState extends ConsumerState<AccessRequestQueueTab> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Alasan Cepat:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                const Text('Alasan Cepat:',
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                 const SizedBox(height: 8),
                 Wrap(
                   spacing: 6,
                   runSpacing: 6,
-                  children: _quickReasons.map((reason) => GestureDetector(
-                    onTap: () {
-                      catatanController.text = reason;
-                      setStateDialog(() {});
-                    },
-                    child: Chip(
-                      label: Text(reason, style: const TextStyle(fontSize: 10)),
-                      backgroundColor: catatanController.text == reason ? AppTheme.maroon.withOpacity(0.1) : Colors.grey.withOpacity(0.1),
-                      padding: EdgeInsets.zero,
-                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                  )).toList(),
+                  children: _quickReasons
+                      .map((reason) => GestureDetector(
+                            onTap: () {
+                              catatanController.text = reason;
+                              setStateDialog(() {});
+                            },
+                            child: Chip(
+                              label: Text(reason,
+                                  style: const TextStyle(fontSize: 10)),
+                              backgroundColor: catatanController.text == reason
+                                  ? AppTheme.maroon.withOpacity(0.1)
+                                  : Colors.grey.withOpacity(0.1),
+                              padding: EdgeInsets.zero,
+                              materialTapTargetSize:
+                                  MaterialTapTargetSize.shrinkWrap,
+                            ),
+                          ))
+                      .toList(),
                 ),
                 const SizedBox(height: 16),
                 const Text('Alasan penolakan (opsional):'),
@@ -930,13 +1128,16 @@ class _AccessRequestQueueTabState extends ConsumerState<AccessRequestQueueTab> {
                 TextField(
                   controller: catatanController,
                   maxLines: 3,
-                  decoration: const InputDecoration(hintText: 'Tulis alasan di sini...'),
+                  decoration: const InputDecoration(
+                      hintText: 'Tulis alasan di sini...'),
                 ),
               ],
             ),
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Batal')),
+            TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('Batal')),
             ElevatedButton.icon(
               style: ElevatedButton.styleFrom(backgroundColor: AppTheme.maroon),
               onPressed: () {
@@ -966,10 +1167,12 @@ class _AccessRequestQueueTabState extends ConsumerState<AccessRequestQueueTab> {
         future: fetchPendingRequests(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator(color: AppTheme.maroon));
+            return const Center(
+                child: CircularProgressIndicator(color: AppTheme.maroon));
           }
           if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return _buildEmptyState(Icons.check_circle_outline_rounded, 'Tidak ada permintaan\nyang menunggu');
+            return _buildEmptyState(Icons.check_circle_outline_rounded,
+                'Tidak ada permintaan\nyang menunggu');
           }
 
           return ListView.builder(
@@ -988,13 +1191,18 @@ class _AccessRequestQueueTabState extends ConsumerState<AccessRequestQueueTab> {
                       Row(
                         children: [
                           Container(
-                            width: 44, height: 44,
+                            width: 44,
+                            height: 44,
                             decoration: BoxDecoration(
-                              color: isMasuk ? Colors.green.withOpacity(0.1) : AppTheme.maroonSurface,
+                              color: isMasuk
+                                  ? Colors.green.withOpacity(0.1)
+                                  : AppTheme.maroonSurface,
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Icon(
-                              isMasuk ? Icons.login_rounded : Icons.logout_rounded,
+                              isMasuk
+                                  ? Icons.login_rounded
+                                  : Icons.logout_rounded,
                               color: isMasuk ? Colors.green : AppTheme.maroon,
                             ),
                           ),
@@ -1003,20 +1211,29 @@ class _AccessRequestQueueTabState extends ConsumerState<AccessRequestQueueTab> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(r['user_nama'], style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
-                                Text('NIM: ${r['user_nim']}', style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                                Text(r['user_nama'],
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 16)),
+                                Text('NIM: ${r['user_nim']}',
+                                    style: const TextStyle(
+                                        fontSize: 12, color: Colors.grey)),
                               ],
                             ),
                           ),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
                             decoration: BoxDecoration(
                               color: isMasuk ? Colors.green : AppTheme.maroon,
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
                               isMasuk ? 'MASUK' : 'KELUAR',
-                              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 12),
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 12),
                             ),
                           ),
                         ],
@@ -1025,15 +1242,23 @@ class _AccessRequestQueueTabState extends ConsumerState<AccessRequestQueueTab> {
                         Container(
                           margin: const EdgeInsets.only(top: 8),
                           padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(color: Colors.orange.withOpacity(0.1), borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.orange.withOpacity(0.3))),
+                          decoration: BoxDecoration(
+                              color: Colors.orange.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                  color: Colors.orange.withOpacity(0.3))),
                           child: Row(
                             children: [
-                              const Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 20),
+                              const Icon(Icons.warning_amber_rounded,
+                                  color: Colors.orange, size: 20),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
                                   'PERINGATAN: ${r['flag_reason'] ?? "User ini ditandai oleh petugas."}',
-                                  style: const TextStyle(color: Colors.orange, fontSize: 12, fontWeight: FontWeight.bold),
+                                  style: const TextStyle(
+                                      color: Colors.orange,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ),
                             ],
@@ -1048,9 +1273,16 @@ class _AccessRequestQueueTabState extends ConsumerState<AccessRequestQueueTab> {
                         ),
                         child: Row(
                           children: [
-                            Expanded(child: _InfoChip(icon: Icons.directions_car, label: '${r['vehicle_jenis']} • ${r['vehicle_plat']}')),
+                            Expanded(
+                                child: _InfoChip(
+                                    icon: Icons.directions_car,
+                                    label:
+                                        '${r['vehicle_jenis']} • ${r['vehicle_plat']}')),
                             const SizedBox(width: 8),
-                            Expanded(child: _InfoChip(icon: Icons.nfc, label: r['rfid_uid'] ?? 'No RFID')),
+                            Expanded(
+                                child: _InfoChip(
+                                    icon: Icons.nfc,
+                                    label: r['rfid_uid'] ?? 'No RFID')),
                           ],
                         ),
                       ),
@@ -1058,7 +1290,8 @@ class _AccessRequestQueueTabState extends ConsumerState<AccessRequestQueueTab> {
                         padding: const EdgeInsets.only(top: 6),
                         child: Text(
                           '🕐 ${r['waktu_request'] ?? '-'}',
-                          style: const TextStyle(fontSize: 11, color: Colors.grey),
+                          style:
+                              const TextStyle(fontSize: 11, color: Colors.grey),
                         ),
                       ),
                       const Divider(height: 20),
@@ -1069,8 +1302,10 @@ class _AccessRequestQueueTabState extends ConsumerState<AccessRequestQueueTab> {
                               style: OutlinedButton.styleFrom(
                                 foregroundColor: AppTheme.maroon,
                                 side: const BorderSide(color: AppTheme.maroon),
-                                padding: const EdgeInsets.symmetric(vertical: 10),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 10),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8)),
                               ),
                               onPressed: () => _showRejectDialog(r['id']),
                               icon: const Icon(Icons.close, size: 16),
@@ -1084,8 +1319,10 @@ class _AccessRequestQueueTabState extends ConsumerState<AccessRequestQueueTab> {
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.green,
                                 foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(vertical: 10),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 10),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8)),
                               ),
                               onPressed: () => _respond(r['id'], 'disetujui'),
                               icon: const Icon(Icons.check_rounded, size: 16),
@@ -1116,24 +1353,30 @@ class VerifikasiTab extends ConsumerStatefulWidget {
 
 class _VerifikasiTabState extends ConsumerState<VerifikasiTab> {
   Future<List<dynamic>> fetchPending() async {
-    final response = await ref.read(dioProvider).get('petugas/vehicles/pending');
+    final response =
+        await ref.read(dioProvider).get('petugas/vehicles/pending');
     return response.data;
   }
 
   Future<void> _updateStatus(int id, String status) async {
     try {
-      await ref.read(dioProvider).put('petugas/vehicles/$id/verify?status=$status');
+      await ref
+          .read(dioProvider)
+          .put('petugas/vehicles/$id/verify?status=$status');
       setState(() {});
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(status == 'disetujui' ? '✓ Kendaraan disetujui' : '✗ Kendaraan ditolak'),
+        content: Text(status == 'disetujui'
+            ? '✓ Kendaraan disetujui'
+            : '✗ Kendaraan ditolak'),
         backgroundColor: status == 'disetujui' ? Colors.green : AppTheme.maroon,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ));
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Error: $e')));
     }
   }
 
@@ -1146,10 +1389,12 @@ class _VerifikasiTabState extends ConsumerState<VerifikasiTab> {
         future: fetchPending(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator(color: AppTheme.maroon));
+            return const Center(
+                child: CircularProgressIndicator(color: AppTheme.maroon));
           }
           if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return _buildEmptyState(Icons.fact_check_outlined, 'Tidak ada kendaraan\nyang menunggu verifikasi');
+            return _buildEmptyState(Icons.fact_check_outlined,
+                'Tidak ada kendaraan\nyang menunggu verifikasi');
           }
 
           return ListView.builder(
@@ -1158,7 +1403,8 @@ class _VerifikasiTabState extends ConsumerState<VerifikasiTab> {
             itemBuilder: (context, index) {
               final v = snapshot.data![index];
               final isMotor = v['jenis_kendaraan'] == 'Motor';
-              final hasStnk = v['foto_stnk'] != null && v['foto_stnk'].toString().isNotEmpty;
+              final hasStnk = v['foto_stnk'] != null &&
+                  v['foto_stnk'].toString().isNotEmpty;
               return Card(
                 margin: const EdgeInsets.only(bottom: 12),
                 child: Padding(
@@ -1169,14 +1415,18 @@ class _VerifikasiTabState extends ConsumerState<VerifikasiTab> {
                       Row(
                         children: [
                           Container(
-                            width: 48, height: 48,
+                            width: 48,
+                            height: 48,
                             decoration: BoxDecoration(
                               color: AppTheme.maroonSurface,
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Icon(
-                              isMotor ? Icons.motorcycle_rounded : Icons.directions_car_rounded,
-                              color: AppTheme.maroon, size: 26,
+                              isMotor
+                                  ? Icons.motorcycle_rounded
+                                  : Icons.directions_car_rounded,
+                              color: AppTheme.maroon,
+                              size: 26,
                             ),
                           ),
                           const SizedBox(width: 12),
@@ -1184,20 +1434,31 @@ class _VerifikasiTabState extends ConsumerState<VerifikasiTab> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(v['plat_nomor'], style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 20)),
-                                Text('${v['jenis_kendaraan']} | User ID: ${v['user_id']}',
-                                    style: const TextStyle(fontSize: 13, color: Colors.grey)),
+                                Text(v['plat_nomor'],
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.w800,
+                                        fontSize: 20)),
+                                Text(
+                                    '${v['jenis_kendaraan']} | User ID: ${v['user_id']}',
+                                    style: const TextStyle(
+                                        fontSize: 13, color: Colors.grey)),
                               ],
                             ),
                           ),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
                             decoration: BoxDecoration(
                               color: const Color(0xFFFFF3CC),
                               borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: const Color(0xFFD4A843)),
+                              border:
+                                  Border.all(color: const Color(0xFFD4A843)),
                             ),
-                            child: const Text('PENDING', style: TextStyle(color: Color(0xFF8B6914), fontWeight: FontWeight.w700, fontSize: 11)),
+                            child: const Text('PENDING',
+                                style: TextStyle(
+                                    color: Color(0xFF8B6914),
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 11)),
                           ),
                         ],
                       ),
@@ -1212,21 +1473,30 @@ class _VerifikasiTabState extends ConsumerState<VerifikasiTab> {
                         child: Row(
                           children: [
                             Icon(
-                              hasStnk ? Icons.image_rounded : Icons.image_not_supported_outlined,
+                              hasStnk
+                                  ? Icons.image_rounded
+                                  : Icons.image_not_supported_outlined,
                               size: 16,
                               color: hasStnk ? Colors.green : Colors.orange,
                             ),
                             const SizedBox(width: 6),
                             Expanded(
                               child: Text(
-                                hasStnk ? 'Foto STNK tersedia' : 'Foto STNK belum diupload',
-                                style: TextStyle(color: hasStnk ? Colors.green : Colors.orange, fontSize: 12),
+                                hasStnk
+                                    ? 'Foto STNK tersedia'
+                                    : 'Foto STNK belum diupload',
+                                style: TextStyle(
+                                    color:
+                                        hasStnk ? Colors.green : Colors.orange,
+                                    fontSize: 12),
                               ),
                             ),
                             if (hasStnk)
                               TextButton(
-                                onPressed: () => showStnkPhotoDialog(context, v['foto_stnk']),
-                                child: const Text('Lihat', style: TextStyle(fontSize: 12)),
+                                onPressed: () => showStnkPhotoDialog(
+                                    context, v['foto_stnk']),
+                                child: const Text('Lihat',
+                                    style: TextStyle(fontSize: 12)),
                               ),
                           ],
                         ),
@@ -1239,10 +1509,13 @@ class _VerifikasiTabState extends ConsumerState<VerifikasiTab> {
                               style: OutlinedButton.styleFrom(
                                 foregroundColor: AppTheme.maroon,
                                 side: const BorderSide(color: AppTheme.maroon),
-                                padding: const EdgeInsets.symmetric(vertical: 10),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 10),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8)),
                               ),
-                              onPressed: () => _updateStatus(v['id'], 'ditolak'),
+                              onPressed: () =>
+                                  _updateStatus(v['id'], 'ditolak'),
                               icon: const Icon(Icons.close, size: 16),
                               label: const Text('Tolak'),
                             ),
@@ -1254,10 +1527,13 @@ class _VerifikasiTabState extends ConsumerState<VerifikasiTab> {
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.green,
                                 foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(vertical: 10),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 10),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8)),
                               ),
-                              onPressed: () => _updateStatus(v['id'], 'disetujui'),
+                              onPressed: () =>
+                                  _updateStatus(v['id'], 'disetujui'),
                               icon: const Icon(Icons.check_rounded, size: 16),
                               label: const Text('Setujui STNK'),
                             ),
@@ -1293,10 +1569,13 @@ class _SearchMemberTabState extends ConsumerState<SearchMemberTab> {
     if (_searchController.text.isEmpty) return;
     setState(() => _loading = true);
     try {
-      final res = await ref.read(dioProvider).get('petugas/search', queryParameters: {'query': _searchController.text});
+      final res = await ref.read(dioProvider).get('petugas/search',
+          queryParameters: {'query': _searchController.text});
       setState(() => _results = res.data);
     } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+      if (mounted)
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Error: $e')));
     } finally {
       setState(() => _loading = false);
     }
@@ -1308,21 +1587,30 @@ class _SearchMemberTabState extends ConsumerState<SearchMemberTab> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(currentStatus ? 'Hapus Peringatan?' : 'Tambah Peringatan?'),
-        content: currentStatus 
-            ? const Text('Yakin ingin menghapus status peringatan pada user ini?')
+        content: currentStatus
+            ? const Text(
+                'Yakin ingin menghapus status peringatan pada user ini?')
             : Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text('User ini akan ditandai pada setiap request akses masa depan.'),
+                  const Text(
+                      'User ini akan ditandai pada setiap request akses masa depan.'),
                   const SizedBox(height: 12),
-                  TextField(controller: reasonController, decoration: const InputDecoration(hintText: 'Alasan peringatan (misal: Sering parkir sembarang)')),
+                  TextField(
+                      controller: reasonController,
+                      decoration: const InputDecoration(
+                          hintText:
+                              'Alasan peringatan (misal: Sering parkir sembarang)')),
                 ],
               ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Batal')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('Batal')),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            style: TextButton.styleFrom(foregroundColor: currentStatus ? Colors.green : Colors.orange),
+            style: TextButton.styleFrom(
+                foregroundColor: currentStatus ? Colors.green : Colors.orange),
             child: Text(currentStatus ? 'HAPUS' : 'SET FLAG'),
           ),
         ],
@@ -1331,13 +1619,16 @@ class _SearchMemberTabState extends ConsumerState<SearchMemberTab> {
 
     if (confirmed == true && mounted) {
       try {
-        await ref.read(dioProvider).put('petugas/flag-user/$userId', queryParameters: {
-          'is_flagged': !currentStatus,
-          'reason': reasonController.text
-        });
+        await ref.read(dioProvider).put('petugas/flag-user/$userId',
+            queryParameters: {
+              'is_flagged': !currentStatus,
+              'reason': reasonController.text
+            });
         _search(); // Refresh
       } catch (e) {
-        if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Gagal: $e')));
+        if (mounted)
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text('Gagal: $e')));
       }
     }
   }
@@ -1346,12 +1637,6 @@ class _SearchMemberTabState extends ConsumerState<SearchMemberTab> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F4F4),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => showRfidProvisionDialog(context, ref),
-        backgroundColor: AppTheme.emerald,
-        icon: const Icon(Icons.nfc_rounded, color: Colors.white),
-        label: const Text('Daftarkan RFID', style: TextStyle(fontWeight: FontWeight.w700, color: Colors.white)),
-      ),
       body: Column(
         children: [
           Padding(
@@ -1361,7 +1646,9 @@ class _SearchMemberTabState extends ConsumerState<SearchMemberTab> {
               decoration: InputDecoration(
                 hintText: 'Cari NIM, Nama, atau Plat Nomor...',
                 prefixIcon: const Icon(Icons.search),
-                suffixIcon: IconButton(icon: const Icon(Icons.clear), onPressed: () => _searchController.clear()),
+                suffixIcon: IconButton(
+                    icon: const Icon(Icons.clear),
+                    onPressed: () => _searchController.clear()),
                 filled: true,
                 fillColor: Colors.white,
                 border: OutlineInputBorder(
@@ -1375,100 +1662,166 @@ class _SearchMemberTabState extends ConsumerState<SearchMemberTab> {
           ),
           if (_loading) const LinearProgressIndicator(color: AppTheme.maroon),
           Expanded(
-            child: _results.isEmpty 
-              ? ModernEmptyState(
-                  icon: Icons.person_search_rounded,
-                  title: 'Cari Pengguna',
-                  subtitle: 'Ketikkan NIM, Nama, atau Plat Nomor\nuntuk melihat detail member.',
-                )
-              : ListView.builder(
-                  itemCount: _results.length,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  itemBuilder: (context, index) {
-                    final u = _results[index];
-                    final isFlagged = u['is_flagged'] == true;
-                    return Container(
-                      margin: const EdgeInsets.only(bottom: 12),
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                        border: isFlagged ? Border.all(color: Colors.orange.withOpacity(0.5)) : null,
-                        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 8, offset: const Offset(0, 2))],
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          CircleAvatar(
-                            radius: 24,
-                            backgroundColor: isFlagged ? Colors.orange[100] : AppTheme.maroonSurface,
-                            child: Icon(isFlagged ? Icons.warning_amber_rounded : Icons.person, color: isFlagged ? Colors.orange : AppTheme.maroon),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Expanded(child: Text(u['nama'], style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16))),
-                                    IconButton(
-                                      icon: Icon(isFlagged ? Icons.flag : Icons.flag_outlined, color: isFlagged ? Colors.orange : Colors.grey, size: 20),
-                                      onPressed: () => _toggleFlag(u['id'], isFlagged),
-                                      padding: EdgeInsets.zero,
-                                      constraints: const BoxConstraints(),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 4),
-                                Text('NIM: ${u['nim']}', style: TextStyle(color: Colors.grey[600], fontSize: 13)),
-                                const SizedBox(height: 12),
-                                if ((u['vehicles'] as List).isNotEmpty) ...[
-                                  Wrap(
-                                    spacing: 8,
-                                    runSpacing: 8,
-                                    children: (u['vehicles'] as List).map((v) => Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                      decoration: BoxDecoration(
-                                        color: AppTheme.maroon.withOpacity(0.05),
-                                        borderRadius: BorderRadius.circular(8),
+            child: _results.isEmpty
+                ? ModernEmptyState(
+                    icon: Icons.person_search_rounded,
+                    title: 'Cari Pengguna',
+                    subtitle:
+                        'Ketikkan NIM, Nama, atau Plat Nomor\nuntuk melihat detail member.',
+                  )
+                : ListView.builder(
+                    itemCount: _results.length,
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    itemBuilder: (context, index) {
+                      final u = _results[index];
+                      final isFlagged = u['is_flagged'] == true;
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 12),
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          border: isFlagged
+                              ? Border.all(
+                                  color: Colors.orange.withOpacity(0.5))
+                              : null,
+                          boxShadow: [],
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CircleAvatar(
+                              radius: 24,
+                              backgroundColor: isFlagged
+                                  ? Colors.orange[100]
+                                  : AppTheme.maroonSurface,
+                              child: Icon(
+                                  isFlagged
+                                      ? Icons.warning_amber_rounded
+                                      : Icons.person,
+                                  color: isFlagged
+                                      ? Colors.orange
+                                      : AppTheme.maroon),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Expanded(
+                                          child: Text(u['nama'],
+                                              style: const TextStyle(
+                                                  fontWeight: FontWeight.w800,
+                                                  fontSize: 16))),
+                                      IconButton(
+                                        icon: Icon(
+                                            isFlagged
+                                                ? Icons.flag
+                                                : Icons.flag_outlined,
+                                            color: isFlagged
+                                                ? Colors.orange
+                                                : Colors.grey,
+                                            size: 20),
+                                        onPressed: () =>
+                                            _toggleFlag(u['id'], isFlagged),
+                                        padding: EdgeInsets.zero,
+                                        constraints: const BoxConstraints(),
                                       ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text('NIM: ${u['nim']}',
+                                      style: TextStyle(
+                                          color: Colors.grey[600],
+                                          fontSize: 13)),
+                                  const SizedBox(height: 12),
+                                  if ((u['vehicles'] as List).isNotEmpty) ...[
+                                    Wrap(
+                                      spacing: 8,
+                                      runSpacing: 8,
+                                      children: (u['vehicles'] as List)
+                                          .map((v) => Container(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 8,
+                                                        vertical: 4),
+                                                decoration: BoxDecoration(
+                                                  color: AppTheme.maroon
+                                                      .withOpacity(0.05),
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                                child: Row(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    Icon(
+                                                        v['jenis'] == 'Motor'
+                                                            ? Icons
+                                                                .motorcycle_rounded
+                                                            : Icons
+                                                                .directions_car_rounded,
+                                                        size: 14,
+                                                        color: AppTheme.maroon),
+                                                    const SizedBox(width: 4),
+                                                    Text(v['plat'],
+                                                        style: const TextStyle(
+                                                            fontSize: 12,
+                                                            fontWeight:
+                                                                FontWeight.w700,
+                                                            color: AppTheme
+                                                                .maroon)),
+                                                  ],
+                                                ),
+                                              ))
+                                          .toList(),
+                                    ),
+                                  ] else ...[
+                                    Text('Belum ada kendaraan',
+                                        style: TextStyle(
+                                            color: Colors.grey[400],
+                                            fontSize: 12,
+                                            fontStyle: FontStyle.italic)),
+                                  ],
+                                  if (isFlagged) ...[
+                                    const SizedBox(height: 12),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 10, vertical: 6),
+                                      decoration: BoxDecoration(
+                                          color: Colors.orange.withOpacity(0.1),
+                                          borderRadius:
+                                              BorderRadius.circular(8)),
                                       child: Row(
-                                        mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          Icon(v['jenis'] == 'Motor' ? Icons.motorcycle_rounded : Icons.directions_car_rounded, size: 14, color: AppTheme.maroon),
-                                          const SizedBox(width: 4),
-                                          Text(v['plat'], style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: AppTheme.maroon)),
+                                          const Icon(Icons.info_outline,
+                                              size: 14, color: Colors.orange),
+                                          const SizedBox(width: 8),
+                                          Expanded(
+                                              child: Text(
+                                                  'Ket: ${u['flag_reason']}',
+                                                  style: const TextStyle(
+                                                      color: Colors.orange,
+                                                      fontSize: 11,
+                                                      fontWeight:
+                                                          FontWeight.w600))),
                                         ],
                                       ),
-                                    )).toList(),
-                                  ),
-                                ] else ...[
-                                  Text('Belum ada kendaraan', style: TextStyle(color: Colors.grey[400], fontSize: 12, fontStyle: FontStyle.italic)),
-                                ],
-                                if (isFlagged) ...[
-                                  const SizedBox(height: 12),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                                    decoration: BoxDecoration(color: Colors.orange.withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
-                                    child: Row(
-                                      children: [
-                                        const Icon(Icons.info_outline, size: 14, color: Colors.orange),
-                                        const SizedBox(width: 8),
-                                        Expanded(child: Text('Ket: ${u['flag_reason']}', style: const TextStyle(color: Colors.orange, fontSize: 11, fontWeight: FontWeight.w600))),
-                                      ],
                                     ),
-                                  ),
+                                  ],
                                 ],
-                              ],
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
           ),
         ],
       ),
@@ -1503,112 +1856,11 @@ class _InfoChip extends StatelessWidget {
       children: [
         Icon(icon, size: 14, color: Colors.grey),
         const SizedBox(width: 4),
-        Flexible(child: Text(label, style: const TextStyle(fontSize: 12, color: Colors.grey), overflow: TextOverflow.ellipsis)),
+        Flexible(
+            child: Text(label,
+                style: const TextStyle(fontSize: 12, color: Colors.grey),
+                overflow: TextOverflow.ellipsis)),
       ],
     );
   }
 }
-
-// %% RFID PROVISION DIALOG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-void showRfidProvisionDialog(BuildContext context, WidgetRef ref) {
-  final nimCtrl = TextEditingController();
-  final uidCtrl = TextEditingController();
-  bool isLoading = false;
-
-  showDialog(
-    context: context,
-    builder: (ctx) => StatefulBuilder(
-      builder: (context, setDialogState) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        child: Container(
-          padding: const EdgeInsets.all(24),
-          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(24)),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(color: AppTheme.emerald.withOpacity(0.1), shape: BoxShape.circle),
-                    child: const Icon(Icons.nfc_rounded, color: AppTheme.emerald, size: 28),
-                  ),
-                  const SizedBox(width: 16),
-                  const Text('Daftarkan RFID', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: AppTheme.slate900)),
-                ],
-              ),
-              const SizedBox(height: 24),
-              const Text('NIM / NPP Mahasiswa', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: AppTheme.slate700)),
-              const SizedBox(height: 8),
-              TextField(
-                controller: nimCtrl,
-                decoration: InputDecoration(
-                  hintText: 'Contoh: 12345678',
-                  prefixIcon: const Icon(Icons.badge_rounded),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-                ),
-              ),
-              const SizedBox(height: 16),
-              const Text('UID Kartu RFID', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: AppTheme.slate700)),
-              const SizedBox(height: 8),
-              TextField(
-                controller: uidCtrl,
-                decoration: InputDecoration(
-                  hintText: 'Tap kartu ke reader...',
-                  prefixIcon: const Icon(Icons.contactless_rounded),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-                ),
-              ),
-              const SizedBox(height: 24),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextButton(
-                      onPressed: () => Navigator.pop(ctx),
-                      style: TextButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)),
-                      child: Text('Batal', style: TextStyle(color: Colors.grey[600], fontWeight: FontWeight.w600)),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        backgroundColor: AppTheme.emerald,
-                      ),
-                      onPressed: isLoading ? null : () async {
-                        if (nimCtrl.text.isEmpty || uidCtrl.text.isEmpty) {
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Semua form wajib diisi')));
-                          return;
-                        }
-                        setDialogState(() => isLoading = true);
-                        try {
-                          final res = await ref.read(dioProvider).post('petugas/rfid/provision', data: {
-                            'nim': nimCtrl.text,
-                            'rfid_uid': uidCtrl.text,
-                          });
-                          if (!context.mounted) return;
-                          Navigator.pop(ctx);
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(res.data['message']), backgroundColor: Colors.green));
-                        } catch (e) {
-                          setDialogState(() => isLoading = false);
-                          if (!context.mounted) return;
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Gagal: $e'), backgroundColor: AppTheme.maroon));
-                        }
-                      },
-                      child: isLoading 
-                          ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                          : const Text('Tautkan', style: TextStyle(fontWeight: FontWeight.w700, color: Colors.white)),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    ),
-  );
-}
-

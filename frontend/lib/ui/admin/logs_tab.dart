@@ -49,15 +49,24 @@ class _LogsTabState extends ConsumerState<LogsTab> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           child: Row(
             children: [
-              const Icon(Icons.filter_list_rounded, size: 18, color: AppTheme.maroon),
+              const Icon(Icons.filter_list_rounded,
+                  size: 18, color: AppTheme.maroon),
               const SizedBox(width: 8),
-              const Text('Filter:', style: TextStyle(fontWeight: FontWeight.w600, color: AppTheme.maroon, fontSize: 13)),
+              const Text('Filter:',
+                  style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: AppTheme.maroon,
+                      fontSize: 13)),
               const SizedBox(width: 10),
               for (final f in ['semua', 'masuk', 'keluar'])
                 Padding(
                   padding: const EdgeInsets.only(right: 8),
                   child: FilterChip(
-                    label: Text(f == 'semua' ? 'Semua' : f == 'masuk' ? '↑ Masuk' : '↓ Keluar'),
+                    label: Text(f == 'semua'
+                        ? 'Semua'
+                        : f == 'masuk'
+                            ? '↑ Masuk'
+                            : '↓ Keluar'),
                     selected: _filter == f,
                     onSelected: (_) => setState(() => _filter = f),
                     selectedColor: AppTheme.maroon,
@@ -78,12 +87,16 @@ class _LogsTabState extends ConsumerState<LogsTab> {
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppTheme.maroon,
                   side: const BorderSide(color: AppTheme.maroon),
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8)),
                 ),
                 onPressed: _exportCsv,
                 icon: const Icon(Icons.download_rounded, size: 16),
-                label: const Text('CSV', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
+                label: const Text('CSV',
+                    style:
+                        TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
               ),
               const SizedBox(width: 8),
               IconButton(
@@ -101,16 +114,19 @@ class _LogsTabState extends ConsumerState<LogsTab> {
             future: fetchLogs(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator(color: AppTheme.maroon));
+                return const Center(
+                    child: CircularProgressIndicator(color: AppTheme.maroon));
               }
               if (!snapshot.hasData || snapshot.data!.isEmpty) {
                 return Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.receipt_long_outlined, size: 64, color: Colors.grey[300]),
+                      Icon(Icons.receipt_long_outlined,
+                          size: 64, color: Colors.grey[300]),
                       const SizedBox(height: 12),
-                      const Text('Belum ada log aktivitas', style: TextStyle(color: Colors.grey, fontSize: 15)),
+                      const Text('Belum ada log aktivitas',
+                          style: TextStyle(color: Colors.grey, fontSize: 15)),
                     ],
                   ),
                 );
@@ -122,7 +138,9 @@ class _LogsTabState extends ConsumerState<LogsTab> {
               }).toList();
 
               if (logs.isEmpty) {
-                return Center(child: Text('Tidak ada log "$_filter".', style: const TextStyle(color: Colors.grey)));
+                return Center(
+                    child: Text('Tidak ada log "$_filter".',
+                        style: const TextStyle(color: Colors.grey)));
               }
 
               return ListView.builder(
@@ -136,17 +154,23 @@ class _LogsTabState extends ConsumerState<LogsTab> {
                   return Card(
                     margin: const EdgeInsets.only(bottom: 8),
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 14, vertical: 12),
                       child: Row(
                         children: [
                           Container(
-                            width: 42, height: 42,
+                            width: 42,
+                            height: 42,
                             decoration: BoxDecoration(
-                              color: isMasuk ? Colors.green[50] : AppTheme.maroonSurface,
+                              color: isMasuk
+                                  ? Colors.green[50]
+                                  : AppTheme.maroonSurface,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Icon(
-                              isMasuk ? Icons.login_rounded : Icons.logout_rounded,
+                              isMasuk
+                                  ? Icons.login_rounded
+                                  : Icons.logout_rounded,
                               color: isMasuk ? Colors.green : AppTheme.maroon,
                               size: 22,
                             ),
@@ -158,32 +182,44 @@ class _LogsTabState extends ConsumerState<LogsTab> {
                               children: [
                                 Text(
                                   '${log['user_nama']} (${log['user_nim']})',
-                                  style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 14),
                                   overflow: TextOverflow.ellipsis,
                                 ),
                                 Text(
                                   '${log['vehicle_jenis'] ?? '-'} • ${log['vehicle_plat'] ?? '-'}',
-                                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                                  style: const TextStyle(
+                                      fontSize: 12, color: Colors.grey),
                                 ),
                                 Text(
                                   log['waktu']?.toString() ?? '-',
-                                  style: const TextStyle(fontSize: 11, color: Colors.grey),
+                                  style: const TextStyle(
+                                      fontSize: 11, color: Colors.grey),
                                 ),
                               ],
                             ),
                           ),
                           const SizedBox(width: 8),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
-                              color: isManual ? const Color(0xFFFFF3CC) : Colors.blue[50],
+                              color: isManual
+                                  ? const Color(0xFFFFF3CC)
+                                  : Colors.blue[50],
                               borderRadius: BorderRadius.circular(6),
-                              border: Border.all(color: isManual ? const Color(0xFFD4A843) : Colors.blue.shade200),
+                              border: Border.all(
+                                  color: isManual
+                                      ? const Color(0xFFD4A843)
+                                      : Colors.blue.shade200),
                             ),
                             child: Text(
                               isManual ? 'MANUAL' : 'AUTO',
                               style: TextStyle(
-                                color: isManual ? const Color(0xFF8B6914) : Colors.blue[700],
+                                color: isManual
+                                    ? const Color(0xFF8B6914)
+                                    : Colors.blue[700],
                                 fontSize: 10,
                                 fontWeight: FontWeight.w700,
                               ),

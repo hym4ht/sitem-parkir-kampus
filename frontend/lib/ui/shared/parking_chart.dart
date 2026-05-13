@@ -24,15 +24,20 @@ class ParkingChart extends StatelessWidget {
                 ),
               ),
               titlesData: FlTitlesData(
-                rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                rightTitles:
+                    const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                topTitles:
+                    const AxisTitles(sideTitles: SideTitles(showTitles: false)),
                 leftTitles: AxisTitles(
                   sideTitles: SideTitles(
                     showTitles: true,
                     reservedSize: 32,
                     getTitlesWidget: (v, _) => Text(
                       v.toInt().toString(),
-                      style: TextStyle(fontSize: 10, color: Colors.grey[400], fontWeight: FontWeight.w500),
+                      style: TextStyle(
+                          fontSize: 10,
+                          color: Colors.grey[400],
+                          fontWeight: FontWeight.w500),
                     ),
                   ),
                 ),
@@ -40,12 +45,17 @@ class ParkingChart extends StatelessWidget {
                   sideTitles: SideTitles(
                     showTitles: true,
                     getTitlesWidget: (value, meta) {
-                      if (value.toInt() < 0 || value.toInt() >= chartData.length) return const Text('');
+                      if (value.toInt() < 0 ||
+                          value.toInt() >= chartData.length)
+                        return const Text('');
                       return Padding(
                         padding: const EdgeInsets.only(top: 8),
                         child: Text(
                           chartData[value.toInt()]['day'],
-                          style: TextStyle(fontSize: 10, color: Colors.grey[500], fontWeight: FontWeight.w600),
+                          style: TextStyle(
+                              fontSize: 10,
+                              color: Colors.grey[500],
+                              fontWeight: FontWeight.w600),
                         ),
                       );
                     },
@@ -122,7 +132,11 @@ class _LegendItem extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 6),
-        Text(label, style: TextStyle(fontSize: 12, color: Colors.grey[600], fontWeight: FontWeight.w500)),
+        Text(label,
+            style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey[600],
+                fontWeight: FontWeight.w500)),
       ],
     );
   }

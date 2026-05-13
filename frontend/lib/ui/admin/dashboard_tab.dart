@@ -25,7 +25,7 @@ class _DashboardTabState extends ConsumerState<DashboardTab> {
       lastDate: DateTime.now().add(const Duration(days: 30)),
     );
     if (date == null) return;
-    
+
     if (!mounted) return;
     final time = await showTimePicker(
       context: context,
@@ -34,7 +34,8 @@ class _DashboardTabState extends ConsumerState<DashboardTab> {
     if (time == null) return;
 
     setState(() {
-      _selectedExpiry = DateTime(date.year, date.month, date.day, time.hour, time.minute);
+      _selectedExpiry =
+          DateTime(date.year, date.month, date.day, time.hour, time.minute);
     });
   }
 
@@ -45,25 +46,29 @@ class _DashboardTabState extends ConsumerState<DashboardTab> {
         'message': _broadcastController.text,
         'expires_at': _selectedExpiry?.toUtc().toIso8601String(),
       };
-      
+
       if (editId != null) {
-        await ref.read(dioProvider).put('admin/announcements/$editId', data: data);
+        await ref
+            .read(dioProvider)
+            .put('admin/announcements/$editId', data: data);
       } else {
         await ref.read(dioProvider).post('admin/broadcast', data: data);
       }
-      
+
       _broadcastController.clear();
       setState(() => _selectedExpiry = null);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(editId != null ? '✓ Pengumuman diperbarui' : '✓ Pengumuman telah terkirim!'),
-          backgroundColor: Colors.green
-        ));
+            content: Text(editId != null
+                ? '✓ Pengumuman diperbarui'
+                : '✓ Pengumuman telah terkirim!'),
+            backgroundColor: Colors.green));
         setState(() {}); // Refresh list
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Gagal: $e')));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Gagal: $e')));
       }
     }
   }
@@ -72,30 +77,37 @@ class _DashboardTabState extends ConsumerState<DashboardTab> {
     try {
       await ref.read(dioProvider).delete('admin/announcements/$id');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('✓ Pengumuman dihapus')));
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('✓ Pengumuman dihapus')));
         setState(() {});
       }
     } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Gagal hapus: $e')));
+      if (mounted)
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Gagal hapus: $e')));
     }
   }
 
   void _showEditDialog(Map<String, dynamic> ann) {
     _broadcastController.text = ann['message'];
-    _selectedExpiry = ann['expires_at'] != null ? DateTime.parse(ann['expires_at']) : null;
-    
+    _selectedExpiry =
+        ann['expires_at'] != null ? DateTime.parse(ann['expires_at']) : null;
+
     showDialog(
       context: context,
       builder: (ctx) => StatefulBuilder(
         builder: (context, setDialogState) => Dialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
           child: Container(
             padding: const EdgeInsets.all(24),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Edit Pengumuman', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800)),
+                const Text('Edit Pengumuman',
+                    style:
+                        TextStyle(fontSize: 20, fontWeight: FontWeight.w800)),
                 const SizedBox(height: 20),
                 TextField(
                   controller: _broadcastController,
@@ -104,7 +116,9 @@ class _DashboardTabState extends ConsumerState<DashboardTab> {
                     hintText: 'Tulis pesan...',
                     filled: true,
                     fillColor: Colors.grey[100],
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide.none),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -112,7 +126,8 @@ class _DashboardTabState extends ConsumerState<DashboardTab> {
                   onTap: () async {
                     final date = await showDatePicker(
                       context: context,
-                      initialDate: _selectedExpiry ?? DateTime.now().add(const Duration(days: 1)),
+                      initialDate: _selectedExpiry ??
+                          DateTime.now().add(const Duration(days: 1)),
                       firstDate: DateTime.now(),
                       lastDate: DateTime.now().add(const Duration(days: 30)),
                     );
@@ -120,21 +135,27 @@ class _DashboardTabState extends ConsumerState<DashboardTab> {
                     if (!mounted) return;
                     final time = await showTimePicker(
                       context: context,
-                      initialTime: TimeOfDay.fromDateTime(_selectedExpiry ?? DateTime.now()),
+                      initialTime: TimeOfDay.fromDateTime(
+                          _selectedExpiry ?? DateTime.now()),
                     );
                     if (time == null) return;
                     setDialogState(() {
-                      _selectedExpiry = DateTime(date.year, date.month, date.day, time.hour, time.minute);
+                      _selectedExpiry = DateTime(date.year, date.month,
+                          date.day, time.hour, time.minute);
                     });
                   },
                   child: Container(
                     padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(border: Border.all(color: Colors.grey[300]!), borderRadius: BorderRadius.circular(12)),
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey[300]!),
+                        borderRadius: BorderRadius.circular(12)),
                     child: Row(
                       children: [
                         const Icon(Icons.timer_outlined, size: 20),
                         const SizedBox(width: 12),
-                        Text(_selectedExpiry == null ? 'Set Waktu Daluwarsa' : 'Daluwarsa: ${_selectedExpiry!.toString().substring(0, 16)}'),
+                        Text(_selectedExpiry == null
+                            ? 'Set Waktu Daluwarsa'
+                            : 'Daluwarsa: ${_selectedExpiry!.toString().substring(0, 16)}'),
                       ],
                     ),
                   ),
@@ -142,7 +163,10 @@ class _DashboardTabState extends ConsumerState<DashboardTab> {
                 const SizedBox(height: 24),
                 Row(
                   children: [
-                    Expanded(child: TextButton(onPressed: () => Navigator.pop(context), child: const Text('Batal'))),
+                    Expanded(
+                        child: TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text('Batal'))),
                     const SizedBox(width: 12),
                     Expanded(
                       child: ElevatedButton(
@@ -176,7 +200,8 @@ class _DashboardTabState extends ConsumerState<DashboardTab> {
         ]),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator(color: AppTheme.maroon));
+            return const Center(
+                child: CircularProgressIndicator(color: AppTheme.maroon));
           }
           if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
@@ -198,18 +223,30 @@ class _DashboardTabState extends ConsumerState<DashboardTab> {
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
-                      colors: [Color(0xFF3D0C0C), Color(0xFF8B1A1A), Color(0xFF9A2020)],
+                      colors: [
+                        Color(0xFF3D0C0C),
+                        Color(0xFF8B1A1A),
+                        Color(0xFF9A2020)
+                      ],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
                     borderRadius: BorderRadius.circular(24),
-                    boxShadow: [BoxShadow(color: AppTheme.maroon.withOpacity(0.25), blurRadius: 20, offset: const Offset(0, 8))],
+                    boxShadow: [],
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Smart Campus Parking', style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w900, letterSpacing: -0.5)),
-                      Text('Ringkasan sistem terkini • Data real-time', style: TextStyle(color: Colors.white.withOpacity(0.6), fontSize: 12)),
+                      const Text('Smart Campus Parking',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 24,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: -0.5)),
+                      Text('Ringkasan sistem terkini • Data real-time',
+                          style: TextStyle(
+                              color: Colors.white.withOpacity(0.6),
+                              fontSize: 12)),
                     ],
                   ),
                 ),
@@ -218,17 +255,41 @@ class _DashboardTabState extends ConsumerState<DashboardTab> {
                 // Stats grid
                 Row(
                   children: [
-                    Expanded(child: _StatCard(label: 'Mahasiswa', value: stats['total_mahasiswa'].toString(), icon: Icons.school_rounded, color: AppTheme.maroon, bgColor: AppTheme.maroonSurface)),
+                    Expanded(
+                        child: _StatCard(
+                            label: 'Mahasiswa',
+                            value: stats['total_mahasiswa'].toString(),
+                            icon: Icons.school_rounded,
+                            color: AppTheme.maroon,
+                            bgColor: AppTheme.maroonSurface)),
                     const SizedBox(width: 12),
-                    Expanded(child: _StatCard(label: 'Petugas', value: stats['total_petugas'].toString(), icon: Icons.badge_rounded, color: Colors.blue, bgColor: Colors.blue[50]!)),
+                    Expanded(
+                        child: _StatCard(
+                            label: 'Petugas',
+                            value: stats['total_petugas'].toString(),
+                            icon: Icons.badge_rounded,
+                            color: Colors.blue,
+                            bgColor: Colors.blue[50]!)),
                   ],
                 ),
                 const SizedBox(height: 12),
                 Row(
                   children: [
-                    Expanded(child: _StatCard(label: 'Masuk', value: stats['masuk_today'].toString(), icon: Icons.login_rounded, color: Colors.green, bgColor: Colors.green[50]!)),
+                    Expanded(
+                        child: _StatCard(
+                            label: 'Masuk',
+                            value: stats['masuk_today'].toString(),
+                            icon: Icons.login_rounded,
+                            color: Colors.green,
+                            bgColor: Colors.green[50]!)),
                     const SizedBox(width: 12),
-                    Expanded(child: _StatCard(label: 'Keluar', value: stats['keluar_today'].toString(), icon: Icons.logout_rounded, color: Colors.orange, bgColor: Colors.orange[50]!)),
+                    Expanded(
+                        child: _StatCard(
+                            label: 'Keluar',
+                            value: stats['keluar_today'].toString(),
+                            icon: Icons.logout_rounded,
+                            color: Colors.orange,
+                            bgColor: Colors.orange[50]!)),
                   ],
                 ),
                 const SizedBox(height: 24),
@@ -252,15 +313,24 @@ class _DashboardTabState extends ConsumerState<DashboardTab> {
                         children: [
                           Container(
                             padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(color: AppTheme.maroonSurface, borderRadius: BorderRadius.circular(10)),
-                            child: const Icon(Icons.campaign_rounded, color: AppTheme.maroon, size: 20),
+                            decoration: BoxDecoration(
+                                color: AppTheme.maroonSurface,
+                                borderRadius: BorderRadius.circular(10)),
+                            child: const Icon(Icons.campaign_rounded,
+                                color: AppTheme.maroon, size: 20),
                           ),
                           const SizedBox(width: 12),
                           const Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Kirim Pengumuman', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppTheme.maroonDark)),
-                              Text('Broadcast ke semua mahasiswa', style: TextStyle(fontSize: 11, color: Colors.grey)),
+                              Text('Kirim Pengumuman',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700,
+                                      color: AppTheme.maroonDark)),
+                              Text('Broadcast ke semua mahasiswa',
+                                  style: TextStyle(
+                                      fontSize: 11, color: Colors.grey)),
                             ],
                           ),
                         ],
@@ -273,7 +343,9 @@ class _DashboardTabState extends ConsumerState<DashboardTab> {
                           hintText: 'Tulis pesan pengumuman...',
                           filled: true,
                           fillColor: const Color(0xFFF8F4F2),
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide.none),
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(14),
+                              borderSide: BorderSide.none),
                         ),
                       ),
                       const SizedBox(height: 12),
@@ -283,13 +355,23 @@ class _DashboardTabState extends ConsumerState<DashboardTab> {
                             child: OutlinedButton.icon(
                               onPressed: _selectExpiry,
                               icon: const Icon(Icons.timer_outlined, size: 18),
-                              label: Text(_selectedExpiry == null ? 'Set Daluwarsa (Opsional)' : 'Exp: ${_selectedExpiry!.toString().substring(11, 16)}', style: const TextStyle(fontSize: 11)),
-                              style: OutlinedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+                              label: Text(
+                                  _selectedExpiry == null
+                                      ? 'Set Daluwarsa (Opsional)'
+                                      : 'Exp: ${_selectedExpiry!.toString().substring(11, 16)}',
+                                  style: const TextStyle(fontSize: 11)),
+                              style: OutlinedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10))),
                             ),
                           ),
                           if (_selectedExpiry != null) ...[
                             const SizedBox(width: 8),
-                            IconButton(onPressed: () => setState(() => _selectedExpiry = null), icon: const Icon(Icons.clear, size: 20, color: Colors.red)),
+                            IconButton(
+                                onPressed: () =>
+                                    setState(() => _selectedExpiry = null),
+                                icon: const Icon(Icons.clear,
+                                    size: 20, color: Colors.red)),
                           ],
                         ],
                       ),
@@ -301,11 +383,13 @@ class _DashboardTabState extends ConsumerState<DashboardTab> {
                             backgroundColor: AppTheme.maroon,
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(vertical: 14),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14)),
                           ),
                           onPressed: () => _sendBroadcast(),
                           icon: const Icon(Icons.send_rounded, size: 18),
-                          label: const Text('Kirim Sekarang', style: TextStyle(fontWeight: FontWeight.w700)),
+                          label: const Text('Kirim Sekarang',
+                              style: TextStyle(fontWeight: FontWeight.w700)),
                         ),
                       ),
                     ],
@@ -316,60 +400,108 @@ class _DashboardTabState extends ConsumerState<DashboardTab> {
                 // Manage Announcements
                 const Row(
                   children: [
-                    Icon(Icons.list_alt_rounded, size: 20, color: AppTheme.maroon),
+                    Icon(Icons.list_alt_rounded,
+                        size: 20, color: AppTheme.maroon),
                     SizedBox(width: 8),
-                    Text('Kelola Pengumuman', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: AppTheme.maroonDark)),
+                    Text('Kelola Pengumuman',
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w800,
+                            color: AppTheme.maroonDark)),
                   ],
                 ),
                 const SizedBox(height: 12),
                 if (announcements.isEmpty)
-                  const Center(child: Padding(padding: EdgeInsets.all(32), child: Text('Belum ada pengumuman', style: TextStyle(color: Colors.grey))))
+                  const Center(
+                      child: Padding(
+                          padding: EdgeInsets.all(32),
+                          child: Text('Belum ada pengumuman',
+                              style: TextStyle(color: Colors.grey))))
                 else
-                  ...announcements.map((ann) => Container(
-                    margin: const EdgeInsets.only(bottom: 12),
-                    decoration: AppTheme.modernCard,
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(6),
-                              decoration: BoxDecoration(color: Colors.grey[100], borderRadius: BorderRadius.circular(8)),
-                              child: const Icon(Icons.person, size: 14, color: Colors.grey),
-                            ),
-                            const SizedBox(width: 8),
-                            Text(ann['sender'], style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12)),
-                            const Spacer(),
-                            IconButton(icon: const Icon(Icons.edit_rounded, size: 18, color: Colors.blue), onPressed: () => _showEditDialog(ann)),
-                            IconButton(icon: const Icon(Icons.delete_rounded, size: 18, color: Colors.red), onPressed: () => _deleteAnnouncement(ann['id'])),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Text(ann['message'], style: const TextStyle(fontSize: 14, height: 1.4)),
-                        const SizedBox(height: 12),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(ann['created_at'].toString().substring(0, 16).replaceAll('T', ' '), style: const TextStyle(fontSize: 10, color: Colors.grey)),
-                            if (ann['expires_at'] != null)
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                decoration: BoxDecoration(color: Colors.orange.withOpacity(0.1), borderRadius: BorderRadius.circular(6)),
-                                child: Row(
+                  ...announcements
+                      .map((ann) => Container(
+                            margin: const EdgeInsets.only(bottom: 12),
+                            decoration: AppTheme.modernCard,
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
                                   children: [
-                                    const Icon(Icons.auto_delete_outlined, size: 12, color: Colors.orange),
-                                    const SizedBox(width: 4),
-                                    Text('Exp: ${ann['expires_at'].toString().substring(0, 16).replaceAll('T', ' ')}', style: const TextStyle(fontSize: 10, color: Colors.orange, fontWeight: FontWeight.bold)),
+                                    Container(
+                                      padding: const EdgeInsets.all(6),
+                                      decoration: BoxDecoration(
+                                          color: Colors.grey[100],
+                                          borderRadius:
+                                              BorderRadius.circular(8)),
+                                      child: const Icon(Icons.person,
+                                          size: 14, color: Colors.grey),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(ann['sender'],
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 12)),
+                                    const Spacer(),
+                                    IconButton(
+                                        icon: const Icon(Icons.edit_rounded,
+                                            size: 18, color: Colors.blue),
+                                        onPressed: () => _showEditDialog(ann)),
+                                    IconButton(
+                                        icon: const Icon(Icons.delete_rounded,
+                                            size: 18, color: Colors.red),
+                                        onPressed: () =>
+                                            _deleteAnnouncement(ann['id'])),
                                   ],
                                 ),
-                              ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  )).toList(),
+                                const SizedBox(height: 8),
+                                Text(ann['message'],
+                                    style: const TextStyle(
+                                        fontSize: 14, height: 1.4)),
+                                const SizedBox(height: 12),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                        ann['created_at']
+                                            .toString()
+                                            .substring(0, 16)
+                                            .replaceAll('T', ' '),
+                                        style: const TextStyle(
+                                            fontSize: 10, color: Colors.grey)),
+                                    if (ann['expires_at'] != null)
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 4),
+                                        decoration: BoxDecoration(
+                                            color:
+                                                Colors.orange.withOpacity(0.1),
+                                            borderRadius:
+                                                BorderRadius.circular(6)),
+                                        child: Row(
+                                          children: [
+                                            const Icon(
+                                                Icons.auto_delete_outlined,
+                                                size: 12,
+                                                color: Colors.orange),
+                                            const SizedBox(width: 4),
+                                            Text(
+                                                'Exp: ${ann['expires_at'].toString().substring(0, 16).replaceAll('T', ' ')}',
+                                                style: const TextStyle(
+                                                    fontSize: 10,
+                                                    color: Colors.orange,
+                                                    fontWeight:
+                                                        FontWeight.bold)),
+                                          ],
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ))
+                      .toList(),
                 const SizedBox(height: 100),
               ],
             ),
@@ -387,7 +519,12 @@ class _StatCard extends StatelessWidget {
   final Color color;
   final Color bgColor;
 
-  const _StatCard({required this.label, required this.value, required this.icon, required this.color, required this.bgColor});
+  const _StatCard(
+      {required this.label,
+      required this.value,
+      required this.icon,
+      required this.color,
+      required this.bgColor});
 
   @override
   Widget build(BuildContext context) {
@@ -397,9 +534,7 @@ class _StatCard extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(color: color.withOpacity(0.08)),
-        boxShadow: [
-          BoxShadow(color: color.withOpacity(0.06), blurRadius: 12, offset: const Offset(0, 4)),
-        ],
+        boxShadow: [],
       ),
       child: Row(
         children: [
@@ -421,9 +556,19 @@ class _StatCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(value, style: TextStyle(fontSize: 28, fontWeight: FontWeight.w900, color: color, letterSpacing: -1)),
+                Text(value,
+                    style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.w900,
+                        color: color,
+                        letterSpacing: -1)),
                 const SizedBox(height: 2),
-                Text(label, style: TextStyle(fontSize: 11, color: Colors.grey[500], fontWeight: FontWeight.w500), overflow: TextOverflow.ellipsis),
+                Text(label,
+                    style: TextStyle(
+                        fontSize: 11,
+                        color: Colors.grey[500],
+                        fontWeight: FontWeight.w500),
+                    overflow: TextOverflow.ellipsis),
               ],
             ),
           ),

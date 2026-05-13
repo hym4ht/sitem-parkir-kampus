@@ -38,7 +38,9 @@ class _MahasiswaDashboardState extends ConsumerState<MahasiswaDashboard> {
         if (decoded['type'] == 'announcement') {
           _showAnnouncement(decoded['message'], decoded['sender']);
         }
-      }, onError: (_) => Future.delayed(const Duration(seconds: 5), _connectWS));
+      },
+          onError: (_) =>
+              Future.delayed(const Duration(seconds: 5), _connectWS));
     } catch (_) {}
   }
 
@@ -58,13 +60,20 @@ class _MahasiswaDashboardState extends ConsumerState<MahasiswaDashboard> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(msg, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+            Text(msg,
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
             const SizedBox(height: 12),
-            Text('Dari: $sender', style: const TextStyle(fontSize: 12, color: Colors.grey, fontStyle: FontStyle.italic)),
+            Text('Dari: $sender',
+                style: const TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey,
+                    fontStyle: FontStyle.italic)),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Tutup')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx), child: const Text('Tutup')),
         ],
       ),
     );
@@ -89,21 +98,32 @@ class _MahasiswaDashboardState extends ConsumerState<MahasiswaDashboard> {
               child: Row(
                 children: [
                   Container(
-                    width: 36, height: 36,
+                    width: 36,
+                    height: 36,
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.15),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(color: Colors.white.withOpacity(0.2)),
                     ),
-                    child: const Icon(Icons.local_parking, size: 18, color: Colors.white),
+                    child: const Icon(Icons.local_parking,
+                        size: 18, color: Colors.white),
                   ),
                   const SizedBox(width: 12),
                   const Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Dashboard Mahasiswa', style: TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w800, letterSpacing: -0.3)),
-                      Text('Smart Campus Parking', style: TextStyle(color: Colors.white60, fontSize: 11, fontWeight: FontWeight.w500)),
+                      Text('Dashboard Mahasiswa',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 17,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: -0.3)),
+                      Text('Smart Campus Parking',
+                          style: TextStyle(
+                              color: Colors.white60,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w500)),
                     ],
                   ),
                 ],
@@ -125,7 +145,7 @@ class _MahasiswaDashboardState extends ConsumerState<MahasiswaDashboard> {
         decoration: BoxDecoration(
           color: Colors.white,
           border: Border(top: BorderSide(color: Colors.grey.withOpacity(0.08))),
-          boxShadow: [BoxShadow(color: AppTheme.maroon.withOpacity(0.06), blurRadius: 20, offset: const Offset(0, -4))],
+          boxShadow: [],
         ),
         child: SafeArea(
           child: Padding(
@@ -161,7 +181,9 @@ class _MahasiswaDashboardState extends ConsumerState<MahasiswaDashboard> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, size: 22, color: isSelected ? AppTheme.maroon : AppTheme.slate500),
+              Icon(icon,
+                  size: 22,
+                  color: isSelected ? AppTheme.maroon : AppTheme.slate500),
               const SizedBox(height: 4),
               Text(
                 label,
@@ -203,14 +225,16 @@ class _StatusTabState extends ConsumerState<StatusTab> {
   Future<void> _sendRequest(String action) async {
     try {
       final dio = ref.read(dioProvider);
-      await dio.post('mahasiswa/access-request', queryParameters: {'action': action});
+      await dio.post('mahasiswa/access-request',
+          queryParameters: {'action': action});
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Permintaan $action dikirim ke petugas 📤'),
             backgroundColor: Colors.blue[700],
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           ),
         );
         setState(() {});
@@ -221,7 +245,8 @@ class _StatusTabState extends ConsumerState<StatusTab> {
           content: Text('Gagal: $e'),
           backgroundColor: AppTheme.maroon,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         ));
       }
     }
@@ -243,14 +268,19 @@ class _StatusTabState extends ConsumerState<StatusTab> {
               future: fetchStatus(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const SizedBox(height: 140, child: Center(child: CircularProgressIndicator(color: AppTheme.maroon)));
+                  return const SizedBox(
+                      height: 140,
+                      child: Center(
+                          child: CircularProgressIndicator(
+                              color: AppTheme.maroon)));
                 }
                 if (snapshot.hasError) return Text('Error: ${snapshot.error}');
 
                 final data = snapshot.data!;
                 final status = data['status'] as String;
                 final isParked = status == 'Sedang Parkir';
-                final bool isFlagged = (data['is_flagged'] == true || data['is_flagged'] == 1);
+                final bool isFlagged =
+                    (data['is_flagged'] == true || data['is_flagged'] == 1);
 
                 return Column(
                   children: [
@@ -266,14 +296,24 @@ class _StatusTabState extends ConsumerState<StatusTab> {
                         ),
                         child: Row(
                           children: [
-                            const Icon(Icons.warning_amber_rounded, color: Colors.red),
+                            const Icon(Icons.warning_amber_rounded,
+                                color: Colors.red),
                             const SizedBox(width: 12),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text('Akun Kamu Ditandai!', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red, fontSize: 13)),
-                                  Text(data['flag_reason'] ?? 'Pelanggaran peraturan parkir', style: TextStyle(color: Colors.red[700], fontSize: 11)),
+                                  const Text('Akun Kamu Ditandai!',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.red,
+                                          fontSize: 13)),
+                                  Text(
+                                      data['flag_reason'] ??
+                                          'Pelanggaran peraturan parkir',
+                                      style: TextStyle(
+                                          color: Colors.red[700],
+                                          fontSize: 11)),
                                 ],
                               ),
                             ),
@@ -287,19 +327,16 @@ class _StatusTabState extends ConsumerState<StatusTab> {
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: isParked
-                              ? [const Color(0xFF1B5E20), const Color(0xFF2E7D32)]
+                              ? [
+                                  const Color(0xFF1B5E20),
+                                  const Color(0xFF2E7D32)
+                                ]
                               : [AppTheme.maroonDark, AppTheme.maroon],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
                         borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: (isParked ? Colors.green : AppTheme.maroon).withOpacity(0.3),
-                            blurRadius: 20,
-                            offset: const Offset(0, 8),
-                          ),
-                        ],
+                        boxShadow: [],
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -314,7 +351,9 @@ class _StatusTabState extends ConsumerState<StatusTab> {
                                   borderRadius: BorderRadius.circular(14),
                                 ),
                                 child: Icon(
-                                  isParked ? Icons.local_parking_rounded : Icons.directions_walk_rounded,
+                                  isParked
+                                      ? Icons.local_parking_rounded
+                                      : Icons.directions_walk_rounded,
                                   color: Colors.white,
                                   size: 28,
                                 ),
@@ -326,11 +365,16 @@ class _StatusTabState extends ConsumerState<StatusTab> {
                                   children: [
                                     Text(
                                       'Status Parkir',
-                                      style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 13),
+                                      style: TextStyle(
+                                          color: Colors.white.withOpacity(0.8),
+                                          fontSize: 13),
                                     ),
                                     Text(
                                       status,
-                                      style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w800),
+                                      style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w800),
                                     ),
                                   ],
                                 ),
@@ -339,9 +383,11 @@ class _StatusTabState extends ConsumerState<StatusTab> {
                                 width: 10,
                                 height: 10,
                                 decoration: BoxDecoration(
-                                  color: isParked ? Colors.greenAccent : Colors.orange,
+                                  color: isParked
+                                      ? Colors.greenAccent
+                                      : Colors.orange,
                                   shape: BoxShape.circle,
-                                  boxShadow: [BoxShadow(color: (isParked ? Colors.greenAccent : Colors.orange).withOpacity(0.6), blurRadius: 6)],
+                                  boxShadow: [],
                                 ),
                               ),
                             ],
@@ -352,11 +398,15 @@ class _StatusTabState extends ConsumerState<StatusTab> {
                             const SizedBox(height: 8),
                             Row(
                               children: [
-                                Icon(Icons.access_time_rounded, size: 14, color: Colors.white.withOpacity(0.7)),
+                                Icon(Icons.access_time_rounded,
+                                    size: 14,
+                                    color: Colors.white.withOpacity(0.7)),
                                 const SizedBox(width: 6),
                                 Text(
                                   'Update: ${data['waktu_terakhir']}',
-                                  style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 12),
+                                  style: TextStyle(
+                                      color: Colors.white.withOpacity(0.7),
+                                      fontSize: 12),
                                 ),
                               ],
                             ),
@@ -386,14 +436,21 @@ class _StatusTabState extends ConsumerState<StatusTab> {
                             color: AppTheme.maroonSurface,
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: const Icon(Icons.send_rounded, color: AppTheme.maroon, size: 18),
+                          child: const Icon(Icons.send_rounded,
+                              color: AppTheme.maroon, size: 18),
                         ),
                         const SizedBox(width: 12),
                         const Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Ajukan Permintaan Akses', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15, color: AppTheme.maroon)),
-                            Text('Akan diverifikasi oleh petugas parkir', style: TextStyle(fontSize: 11, color: Colors.grey)),
+                            Text('Ajukan Permintaan Akses',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 15,
+                                    color: AppTheme.maroon)),
+                            Text('Akan diverifikasi oleh petugas parkir',
+                                style: TextStyle(
+                                    fontSize: 11, color: Colors.grey)),
                           ],
                         ),
                       ],
@@ -409,7 +466,8 @@ class _StatusTabState extends ConsumerState<StatusTab> {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.green,
                               padding: const EdgeInsets.symmetric(vertical: 12),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
                             ),
                           ),
                         ),
@@ -422,7 +480,8 @@ class _StatusTabState extends ConsumerState<StatusTab> {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppTheme.maroon,
                               padding: const EdgeInsets.symmetric(vertical: 12),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
                             ),
                           ),
                         ),
@@ -439,15 +498,26 @@ class _StatusTabState extends ConsumerState<StatusTab> {
               children: [
                 Icon(Icons.campaign_rounded, size: 20, color: Colors.orange),
                 SizedBox(width: 8),
-                Text('Pengumuman Terbaru', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.orange)),
+                Text('Pengumuman Terbaru',
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.orange)),
               ],
             ),
             const SizedBox(height: 12),
             FutureBuilder<List<dynamic>>(
-              future: ref.read(dioProvider).get('mahasiswa/announcements').then((r) => r.data as List<dynamic>),
+              future: ref
+                  .read(dioProvider)
+                  .get('mahasiswa/announcements')
+                  .then((r) => r.data as List<dynamic>),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const SizedBox(height: 60, child: Center(child: CircularProgressIndicator(strokeWidth: 2, color: Colors.orange)));
+                  return const SizedBox(
+                      height: 60,
+                      child: Center(
+                          child: CircularProgressIndicator(
+                              strokeWidth: 2, color: Colors.orange)));
                 }
                 if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   return Container(
@@ -456,13 +526,16 @@ class _StatusTabState extends ConsumerState<StatusTab> {
                     decoration: BoxDecoration(
                       color: Colors.orange.withOpacity(0.05),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.orange.withOpacity(0.15)),
+                      border:
+                          Border.all(color: Colors.orange.withOpacity(0.15)),
                     ),
                     child: Column(
                       children: [
-                        Icon(Icons.campaign_outlined, size: 32, color: Colors.grey[300]),
+                        Icon(Icons.campaign_outlined,
+                            size: 32, color: Colors.grey[300]),
                         const SizedBox(height: 6),
-                        const Text('Belum ada pengumuman', style: TextStyle(color: Colors.grey, fontSize: 13)),
+                        const Text('Belum ada pengumuman',
+                            style: TextStyle(color: Colors.grey, fontSize: 13)),
                       ],
                     ),
                   );
@@ -475,12 +548,16 @@ class _StatusTabState extends ConsumerState<StatusTab> {
                       padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [Colors.orange.withOpacity(0.08), Colors.amber.withOpacity(0.04)],
+                          colors: [
+                            Colors.orange.withOpacity(0.08),
+                            Colors.amber.withOpacity(0.04)
+                          ],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
                         borderRadius: BorderRadius.circular(14),
-                        border: Border.all(color: Colors.orange.withOpacity(0.2)),
+                        border:
+                            Border.all(color: Colors.orange.withOpacity(0.2)),
                       ),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -492,7 +569,8 @@ class _StatusTabState extends ConsumerState<StatusTab> {
                               color: Colors.orange.withOpacity(0.15),
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            child: const Icon(Icons.campaign, color: Colors.orange, size: 18),
+                            child: const Icon(Icons.campaign,
+                                color: Colors.orange, size: 18),
                           ),
                           const SizedBox(width: 12),
                           Expanded(
@@ -501,12 +579,15 @@ class _StatusTabState extends ConsumerState<StatusTab> {
                               children: [
                                 Text(
                                   ann['message'] ?? '',
-                                  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 13),
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
                                   'Oleh: ${ann['sender'] ?? '-'} • ${ann['created_at'] ?? ''}',
-                                  style: TextStyle(fontSize: 10, color: Colors.grey[500]),
+                                  style: TextStyle(
+                                      fontSize: 10, color: Colors.grey[500]),
                                 ),
                               ],
                             ),
@@ -526,7 +607,11 @@ class _StatusTabState extends ConsumerState<StatusTab> {
               children: [
                 Icon(Icons.history_rounded, size: 20, color: AppTheme.maroon),
                 SizedBox(width: 8),
-                Text('Riwayat Permintaan', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppTheme.maroon)),
+                Text('Riwayat Permintaan',
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: AppTheme.maroon)),
               ],
             ),
             const SizedBox(height: 12),
@@ -536,7 +621,8 @@ class _StatusTabState extends ConsumerState<StatusTab> {
               future: fetchRequests(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator(color: AppTheme.maroon));
+                  return const Center(
+                      child: CircularProgressIndicator(color: AppTheme.maroon));
                 }
                 if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   return Card(
@@ -544,9 +630,11 @@ class _StatusTabState extends ConsumerState<StatusTab> {
                       padding: const EdgeInsets.all(24),
                       child: Column(
                         children: [
-                          Icon(Icons.inbox_rounded, size: 40, color: Colors.grey[300]),
+                          Icon(Icons.inbox_rounded,
+                              size: 40, color: Colors.grey[300]),
                           const SizedBox(height: 8),
-                          const Text('Belum ada permintaan', style: TextStyle(color: Colors.grey)),
+                          const Text('Belum ada permintaan',
+                              style: TextStyle(color: Colors.grey)),
                         ],
                       ),
                     ),
@@ -570,11 +658,15 @@ class _StatusTabState extends ConsumerState<StatusTab> {
                               width: 40,
                               height: 40,
                               decoration: BoxDecoration(
-                                color: isMasuk ? Colors.green[50] : AppTheme.maroonSurface,
+                                color: isMasuk
+                                    ? Colors.green[50]
+                                    : AppTheme.maroonSurface,
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: Icon(
-                                isMasuk ? Icons.login_rounded : Icons.logout_rounded,
+                                isMasuk
+                                    ? Icons.login_rounded
+                                    : Icons.logout_rounded,
                                 color: isMasuk ? Colors.green : AppTheme.maroon,
                                 size: 20,
                               ),
@@ -588,28 +680,43 @@ class _StatusTabState extends ConsumerState<StatusTab> {
                                     children: [
                                       Text(
                                         isMasuk ? 'Masuk' : 'Keluar',
-                                        style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 14),
                                       ),
                                       const SizedBox(width: 8),
                                       Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 3),
                                         decoration: BoxDecoration(
                                           color: statusColor.withOpacity(0.12),
-                                          borderRadius: BorderRadius.circular(6),
-                                          border: Border.all(color: statusColor.withOpacity(0.3)),
+                                          borderRadius:
+                                              BorderRadius.circular(6),
+                                          border: Border.all(
+                                              color:
+                                                  statusColor.withOpacity(0.3)),
                                         ),
                                         child: Text(
                                           status.toUpperCase(),
-                                          style: TextStyle(color: statusColor, fontSize: 10, fontWeight: FontWeight.w700),
+                                          style: TextStyle(
+                                              color: statusColor,
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.w700),
                                         ),
                                       ),
                                     ],
                                   ),
                                   const SizedBox(height: 2),
-                                  Text(r['waktu_request'] ?? '', style: const TextStyle(fontSize: 11, color: Colors.grey)),
-                                  if (r['catatan'] != null && r['catatan'].toString().isNotEmpty) ...[
+                                  Text(r['waktu_request'] ?? '',
+                                      style: const TextStyle(
+                                          fontSize: 11, color: Colors.grey)),
+                                  if (r['catatan'] != null &&
+                                      r['catatan'].toString().isNotEmpty) ...[
                                     const SizedBox(height: 4),
-                                    Text('Catatan: ${r['catatan']}', style: const TextStyle(fontSize: 11, color: AppTheme.maroon)),
+                                    Text('Catatan: ${r['catatan']}',
+                                        style: const TextStyle(
+                                            fontSize: 11,
+                                            color: AppTheme.maroon)),
                                   ],
                                 ],
                               ),
@@ -666,9 +773,9 @@ class _KendaraanTabState extends ConsumerState<KendaraanTab> {
           });
 
           await ref.read(dioProvider).post(
-            'mahasiswa/vehicles/$vehicleId/upload-stnk',
-            data: formData,
-          );
+                'mahasiswa/vehicles/$vehicleId/upload-stnk',
+                data: formData,
+              );
 
           if (!mounted) return;
           setState(() {});
@@ -683,13 +790,16 @@ class _KendaraanTabState extends ConsumerState<KendaraanTab> {
               ),
               backgroundColor: Colors.green,
               behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
             ),
           );
         } catch (err) {
           if (!mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Gagal upload: $err'), backgroundColor: AppTheme.maroon),
+            SnackBar(
+                content: Text('Gagal upload: $err'),
+                backgroundColor: AppTheme.maroon),
           );
         }
       });
@@ -705,7 +815,8 @@ class _KendaraanTabState extends ConsumerState<KendaraanTab> {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => Dialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
           child: Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
@@ -724,45 +835,71 @@ class _KendaraanTabState extends ConsumerState<KendaraanTab> {
                         color: AppTheme.maroon.withOpacity(0.1),
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(Icons.add_circle_outline_rounded, color: AppTheme.maroon, size: 28),
+                      child: const Icon(Icons.add_circle_outline_rounded,
+                          color: AppTheme.maroon, size: 28),
                     ),
                     const SizedBox(width: 16),
-                    const Text('Daftar Kendaraan', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: AppTheme.slate900)),
+                    const Text('Daftar Kendaraan',
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w800,
+                            color: AppTheme.slate900)),
                   ],
                 ),
                 const SizedBox(height: 24),
-                const Text('Jenis Kendaraan', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: AppTheme.slate700)),
+                const Text('Jenis Kendaraan',
+                    style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
+                        color: AppTheme.slate700)),
                 const SizedBox(height: 8),
                 DropdownButtonFormField<String>(
                   value: selectedType,
-                  items: ['Motor', 'Mobil'].map((t) => DropdownMenuItem(value: t, child: Text(t, style: const TextStyle(fontWeight: FontWeight.w600)))).toList(),
+                  items: ['Motor', 'Mobil']
+                      .map((t) => DropdownMenuItem(
+                          value: t,
+                          child: Text(t,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.w600))))
+                      .toList(),
                   onChanged: (val) => setDialogState(() => selectedType = val!),
                   decoration: InputDecoration(
                     prefixIcon: const Icon(Icons.directions_car_rounded),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16)),
                   ),
                   icon: const Icon(Icons.keyboard_arrow_down_rounded),
                 ),
                 const SizedBox(height: 16),
-                const Text('Merek Kendaraan', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: AppTheme.slate700)),
+                const Text('Merek Kendaraan',
+                    style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
+                        color: AppTheme.slate700)),
                 const SizedBox(height: 8),
                 TextField(
                   controller: merekController,
                   decoration: InputDecoration(
                     hintText: 'Contoh: Honda Vario, Toyota Avanza',
                     prefixIcon: const Icon(Icons.branding_watermark_rounded),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16)),
                   ),
                 ),
                 const SizedBox(height: 16),
-                const Text('Plat Nomor', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: AppTheme.slate700)),
+                const Text('Plat Nomor',
+                    style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
+                        color: AppTheme.slate700)),
                 const SizedBox(height: 8),
                 TextField(
                   controller: platController,
                   decoration: InputDecoration(
                     hintText: 'Contoh: G 1234 AB',
                     prefixIcon: const Icon(Icons.credit_card_rounded),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16)),
                   ),
                   textCapitalization: TextCapitalization.characters,
                 ),
@@ -776,12 +913,16 @@ class _KendaraanTabState extends ConsumerState<KendaraanTab> {
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.info_outline, size: 20, color: AppTheme.maroon.withOpacity(0.8)),
+                      Icon(Icons.info_outline,
+                          size: 20, color: AppTheme.maroon.withOpacity(0.8)),
                       const SizedBox(width: 12),
                       const Expanded(
                         child: Text(
                           'Kendaraan perlu diverifikasi oleh petugas parkir sebelum digunakan.',
-                          style: TextStyle(fontSize: 12, color: AppTheme.maroon, fontWeight: FontWeight.w500),
+                          style: TextStyle(
+                              fontSize: 12,
+                              color: AppTheme.maroon,
+                              fontWeight: FontWeight.w500),
                         ),
                       ),
                     ],
@@ -793,8 +934,12 @@ class _KendaraanTabState extends ConsumerState<KendaraanTab> {
                     Expanded(
                       child: TextButton(
                         onPressed: () => Navigator.pop(context),
-                        style: TextButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)),
-                        child: Text('Batal', style: TextStyle(color: Colors.grey[600], fontWeight: FontWeight.w600)),
+                        style: TextButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 16)),
+                        child: Text('Batal',
+                            style: TextStyle(
+                                color: Colors.grey[600],
+                                fontWeight: FontWeight.w600)),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -805,12 +950,18 @@ class _KendaraanTabState extends ConsumerState<KendaraanTab> {
                           backgroundColor: AppTheme.maroon,
                         ),
                         onPressed: () async {
-                          if (platController.text.isEmpty || merekController.text.isEmpty) {
-                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Plat nomor dan Merek wajib diisi')));
+                          if (platController.text.isEmpty ||
+                              merekController.text.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text(
+                                        'Plat nomor dan Merek wajib diisi')));
                             return;
                           }
                           try {
-                            await ref.read(dioProvider).post('mahasiswa/vehicles', data: {
+                            await ref
+                                .read(dioProvider)
+                                .post('mahasiswa/vehicles', data: {
                               'jenis_kendaraan': selectedType,
                               'plat_nomor': platController.text.toUpperCase(),
                               'merek': merekController.text,
@@ -820,18 +971,24 @@ class _KendaraanTabState extends ConsumerState<KendaraanTab> {
                             setState(() {});
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: const Text('Kendaraan berhasil didaftarkan! 🚗'),
+                                content: const Text(
+                                    'Kendaraan berhasil didaftarkan! 🚗'),
                                 backgroundColor: Colors.green,
                                 behavior: SnackBarBehavior.floating,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10)),
                               ),
                             );
                           } catch (e) {
                             if (!mounted) return;
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Error: $e')));
                           }
                         },
-                        child: const Text('Simpan', style: TextStyle(fontWeight: FontWeight.w700, color: Colors.white)),
+                        child: const Text('Simpan',
+                            style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white)),
                       ),
                     ),
                   ],
@@ -858,7 +1015,8 @@ class _KendaraanTabState extends ConsumerState<KendaraanTab> {
             return ModernEmptyState(
               icon: Icons.no_crash_outlined,
               title: 'Belum Ada Kendaraan',
-              subtitle: 'Kamu belum mendaftarkan kendaraan apa pun.\nDaftarkan sekarang untuk mulai parkir.',
+              subtitle:
+                  'Kamu belum mendaftarkan kendaraan apa pun.\nDaftarkan sekarang untuk mulai parkir.',
               actionLabel: 'Daftar Kendaraan',
               onAction: _showAddVehicleDialog,
             );
@@ -873,7 +1031,8 @@ class _KendaraanTabState extends ConsumerState<KendaraanTab> {
               final statusColor = AppTheme.statusColor(status);
               final isMotor = vehicle['jenis_kendaraan'] == 'Motor';
 
-              final hasStnk = vehicle['foto_stnk'] != null && vehicle['foto_stnk'].toString().isNotEmpty;
+              final hasStnk = vehicle['foto_stnk'] != null &&
+                  vehicle['foto_stnk'].toString().isNotEmpty;
 
               return Card(
                 margin: const EdgeInsets.only(bottom: 12),
@@ -892,8 +1051,11 @@ class _KendaraanTabState extends ConsumerState<KendaraanTab> {
                               borderRadius: BorderRadius.circular(14),
                             ),
                             child: Icon(
-                              isMotor ? Icons.motorcycle_rounded : Icons.directions_car_rounded,
-                              color: AppTheme.maroon, size: 28,
+                              isMotor
+                                  ? Icons.motorcycle_rounded
+                                  : Icons.directions_car_rounded,
+                              color: AppTheme.maroon,
+                              size: 28,
                             ),
                           ),
                           const SizedBox(width: 14),
@@ -901,29 +1063,39 @@ class _KendaraanTabState extends ConsumerState<KendaraanTab> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(vehicle['plat_nomor'], style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 18)),
+                                Text(vehicle['plat_nomor'],
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.w800,
+                                        fontSize: 18)),
                                 Text(
                                   '${vehicle['jenis_kendaraan']}${vehicle['merek'] != null && vehicle['merek'].toString().isNotEmpty ? ' • ${vehicle['merek']}' : ''}',
-                                  style: const TextStyle(fontSize: 13, color: Colors.grey),
+                                  style: const TextStyle(
+                                      fontSize: 13, color: Colors.grey),
                                 ),
                               ],
                             ),
                           ),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 6),
                             decoration: BoxDecoration(
                               color: statusColor.withOpacity(0.12),
                               borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: statusColor.withOpacity(0.3)),
+                              border: Border.all(
+                                  color: statusColor.withOpacity(0.3)),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(AppTheme.statusIcon(status), size: 14, color: statusColor),
+                                Icon(AppTheme.statusIcon(status),
+                                    size: 14, color: statusColor),
                                 const SizedBox(width: 4),
                                 Text(
                                   status.toUpperCase(),
-                                  style: TextStyle(color: statusColor, fontSize: 11, fontWeight: FontWeight.w700),
+                                  style: TextStyle(
+                                      color: statusColor,
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w700),
                                 ),
                               ],
                             ),
@@ -941,16 +1113,22 @@ class _KendaraanTabState extends ConsumerState<KendaraanTab> {
                         child: Row(
                           children: [
                             Icon(
-                              hasStnk ? Icons.check_circle_rounded : Icons.camera_alt_outlined,
+                              hasStnk
+                                  ? Icons.check_circle_rounded
+                                  : Icons.camera_alt_outlined,
                               size: 18,
                               color: hasStnk ? Colors.green : Colors.orange,
                             ),
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
-                                hasStnk ? 'Foto STNK telah diupload ✓' : 'Upload foto STNK untuk verifikasi',
+                                hasStnk
+                                    ? 'Foto STNK telah diupload ✓'
+                                    : 'Upload foto STNK untuk verifikasi',
                                 style: TextStyle(
-                                  color: hasStnk ? Colors.green : Colors.orange[800],
+                                  color: hasStnk
+                                      ? Colors.green
+                                      : Colors.orange[800],
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -960,19 +1138,30 @@ class _KendaraanTabState extends ConsumerState<KendaraanTab> {
                               TextButton(
                                 style: TextButton.styleFrom(
                                   foregroundColor: Colors.green,
-                                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 8),
                                 ),
-                                onPressed: () => showStnkPhotoDialog(context, vehicle['foto_stnk']),
-                                child: const Text('Lihat', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                                onPressed: () => showStnkPhotoDialog(
+                                    context, vehicle['foto_stnk']),
+                                child: const Text('Lihat',
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold)),
                               ),
                             TextButton.icon(
                               style: TextButton.styleFrom(
                                 foregroundColor: AppTheme.maroon,
-                                padding: const EdgeInsets.symmetric(horizontal: 8),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8),
                               ),
                               onPressed: () => _uploadStnk(vehicle['id']),
-                              icon: Icon(hasStnk ? Icons.refresh : Icons.upload_rounded, size: 16),
-                              label: Text(hasStnk ? 'Ganti' : 'Upload', style: const TextStyle(fontSize: 12)),
+                              icon: Icon(
+                                  hasStnk
+                                      ? Icons.refresh
+                                      : Icons.upload_rounded,
+                                  size: 16),
+                              label: Text(hasStnk ? 'Ganti' : 'Upload',
+                                  style: const TextStyle(fontSize: 12)),
                             ),
                           ],
                         ),
@@ -1035,7 +1224,7 @@ class _HistoryTabState extends ConsumerState<HistoryTab> {
                 final log = snapshot.data![index];
                 final isMasuk = log['jenis_aktivitas'] == 'masuk';
                 final date = DateTime.parse(log['waktu']).toLocal();
-                
+
                 return Container(
                   margin: const EdgeInsets.only(bottom: 12),
                   padding: const EdgeInsets.all(16),
@@ -1043,14 +1232,16 @@ class _HistoryTabState extends ConsumerState<HistoryTab> {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(color: Colors.grey.withOpacity(0.1)),
-                    boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 8, offset: const Offset(0, 2))],
+                    boxShadow: [],
                   ),
                   child: Row(
                     children: [
                       Container(
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: isMasuk ? Colors.green.withOpacity(0.1) : AppTheme.maroon.withOpacity(0.1),
+                          color: isMasuk
+                              ? Colors.green.withOpacity(0.1)
+                              : AppTheme.maroon.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Icon(
@@ -1065,12 +1256,14 @@ class _HistoryTabState extends ConsumerState<HistoryTab> {
                           children: [
                             Text(
                               isMasuk ? 'Masuk Kampus' : 'Keluar Kampus',
-                              style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.w700, fontSize: 16),
                             ),
                             const SizedBox(height: 4),
                             Text(
                               '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}',
-                              style: TextStyle(color: Colors.grey[500], fontSize: 13),
+                              style: TextStyle(
+                                  color: Colors.grey[500], fontSize: 13),
                             ),
                           ],
                         ),
@@ -1078,17 +1271,26 @@ class _HistoryTabState extends ConsumerState<HistoryTab> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Text(log['plat_nomor'], style: const TextStyle(fontWeight: FontWeight.w800)),
+                          Text(log['plat_nomor'],
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.w800)),
                           const SizedBox(height: 4),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
                               color: Colors.grey[100],
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Text(
-                              log['status_akses'].toString().replaceAll('_', ' ').toUpperCase(),
-                              style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.grey[600]),
+                              log['status_akses']
+                                  .toString()
+                                  .replaceAll('_', ' ')
+                                  .toUpperCase(),
+                              style: TextStyle(
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey[600]),
                             ),
                           ),
                         ],
@@ -1104,4 +1306,3 @@ class _HistoryTabState extends ConsumerState<HistoryTab> {
     );
   }
 }
-

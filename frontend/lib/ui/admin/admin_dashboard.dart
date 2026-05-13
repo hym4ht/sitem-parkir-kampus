@@ -42,21 +42,32 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard> {
               child: Row(
                 children: [
                   Container(
-                    width: 36, height: 36,
+                    width: 36,
+                    height: 36,
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.15),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(color: Colors.white.withOpacity(0.2)),
                     ),
-                    child: const Icon(Icons.local_parking, size: 18, color: Colors.white),
+                    child: const Icon(Icons.local_parking,
+                        size: 18, color: Colors.white),
                   ),
                   const SizedBox(width: 12),
                   const Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Admin Dashboard', style: TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w800, letterSpacing: -0.3)),
-                      Text('Smart Campus Parking', style: TextStyle(color: Colors.white60, fontSize: 11, fontWeight: FontWeight.w500)),
+                      Text('Admin Dashboard',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 17,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: -0.3)),
+                      Text('Smart Campus Parking',
+                          style: TextStyle(
+                              color: Colors.white60,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w500)),
                     ],
                   ),
                   const Spacer(),
@@ -66,13 +77,15 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: IconButton(
-                      icon: const Icon(Icons.logout_rounded, color: Colors.white, size: 20),
+                      icon: const Icon(Icons.logout_rounded,
+                          color: Colors.white, size: 20),
                       tooltip: 'Keluar',
                       onPressed: () async {
                         await ref.read(authProvider.notifier).logout();
                         if (context.mounted) {
                           Navigator.of(context).pushAndRemoveUntil(
-                            MaterialPageRoute(builder: (_) => const LoginScreen()),
+                            MaterialPageRoute(
+                                builder: (_) => const LoginScreen()),
                             (route) => false,
                           );
                         }
@@ -93,7 +106,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard> {
         decoration: BoxDecoration(
           color: Colors.white,
           border: Border(top: BorderSide(color: Colors.grey.withOpacity(0.08))),
-          boxShadow: [BoxShadow(color: AppTheme.maroon.withOpacity(0.06), blurRadius: 20, offset: const Offset(0, -4))],
+          boxShadow: [],
         ),
         child: SafeArea(
           child: Padding(
@@ -112,20 +125,30 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard> {
                       duration: const Duration(milliseconds: 200),
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       decoration: BoxDecoration(
-                        color: isSelected ? AppTheme.maroonSurface : Colors.transparent,
+                        color: isSelected
+                            ? AppTheme.maroonSurface
+                            : Colors.transparent,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(t.icon, size: 22, color: isSelected ? AppTheme.maroon : AppTheme.slate500),
+                          Icon(t.icon,
+                              size: 22,
+                              color: isSelected
+                                  ? AppTheme.maroon
+                                  : AppTheme.slate500),
                           const SizedBox(height: 4),
                           Text(
                             t.label,
                             style: TextStyle(
                               fontSize: 10,
-                              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                              color: isSelected ? AppTheme.maroon : AppTheme.slate500,
+                              fontWeight: isSelected
+                                  ? FontWeight.w700
+                                  : FontWeight.w500,
+                              color: isSelected
+                                  ? AppTheme.maroon
+                                  : AppTheme.slate500,
                             ),
                           ),
                         ],

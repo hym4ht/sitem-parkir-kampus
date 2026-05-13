@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  // === Color Palette — Modern Dark Maroon ===
-  static const Color maroon = Color(0xFF8B1A1A);
-  static const Color maroonDark = Color(0xFF5C1010);
-  static const Color maroonLight = Color(0xFFAE3030);
-  static const Color maroonSurface = Color(0xFFFFF5F5);
+  // === Color Palette ===
+  static const Color primary = Color(0xFF800000); // Maroon
+  static const Color maroon = primary; // Backward compatibility
+  static const Color maroonDark = primary;
+  static const Color maroonLight = primary;
+  static const Color maroonSurface = Color(0xFFF9FAFB);
+  static const Color background = Color(0xFFFFFFFF); // Putih bersih
+  static const Color surfaceAccent = Color(0xFFF9FAFB); // Abu-abu sangat muda
+  static const Color bodyText = Colors.black87; // Body text color
 
   // Accent & Semantic Colors
   static const Color gold = Color(0xFFD4A843);
@@ -22,187 +27,220 @@ class AppTheme {
   static const Color slate900 = Color(0xFF0F172A);
 
   static ThemeData get theme {
-    final colorScheme = ColorScheme.fromSeed(
-      seedColor: maroon,
-      brightness: Brightness.light,
-      primary: maroon,
-      secondary: teal,
-      surface: Colors.white,
-      error: const Color(0xFFDC2626),
+    final textTheme = GoogleFonts.plusJakartaSansTextTheme().copyWith(
+      displayLarge: GoogleFonts.plusJakartaSans(
+          fontWeight: FontWeight.w800, letterSpacing: -1.0, color: bodyText),
+      displayMedium: GoogleFonts.plusJakartaSans(
+          fontWeight: FontWeight.w800, letterSpacing: -1.0, color: bodyText),
+      displaySmall: GoogleFonts.plusJakartaSans(
+          fontWeight: FontWeight.w800, letterSpacing: -1.0, color: bodyText),
+      headlineLarge: GoogleFonts.plusJakartaSans(
+          fontWeight: FontWeight.w800, letterSpacing: -1.0, color: bodyText),
+      headlineMedium: GoogleFonts.plusJakartaSans(
+          fontWeight: FontWeight.w800, letterSpacing: -1.0, color: bodyText),
+      headlineSmall: GoogleFonts.plusJakartaSans(
+          fontWeight: FontWeight.w800, letterSpacing: -1.0, color: bodyText),
+      titleLarge: GoogleFonts.plusJakartaSans(
+          fontWeight: FontWeight.w800, letterSpacing: -1.0, color: bodyText),
+      titleMedium: GoogleFonts.plusJakartaSans(
+          fontWeight: FontWeight.w800, letterSpacing: -1.0, color: bodyText),
+      titleSmall: GoogleFonts.plusJakartaSans(
+          fontWeight: FontWeight.w800, letterSpacing: -1.0, color: bodyText),
+      bodyLarge: GoogleFonts.plusJakartaSans(color: bodyText),
+      bodyMedium: GoogleFonts.plusJakartaSans(color: bodyText),
+      bodySmall: GoogleFonts.plusJakartaSans(color: bodyText),
     );
 
     return ThemeData(
       useMaterial3: true,
-      colorScheme: colorScheme,
-      fontFamily: 'Inter',
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: primary,
+        primary: primary,
+        surface: background,
+        surfaceContainerHighest: surfaceAccent,
+        onSurface: bodyText,
+        brightness: Brightness.light,
+      ),
+      textTheme: textTheme,
+      scaffoldBackgroundColor: background,
 
-      // Scaffold — Subtle warm neutral
-      scaffoldBackgroundColor: const Color(0xFFF6F3F0),
-
-      // AppBar — Premium gradient feel
+      // AppBar
       appBarTheme: AppBarTheme(
-        backgroundColor: maroonDark,
-        foregroundColor: Colors.white,
+        backgroundColor: background,
+        foregroundColor: primary,
         elevation: 0,
-        centerTitle: false,
         scrolledUnderElevation: 0,
-        titleTextStyle: const TextStyle(
-          fontFamily: 'Inter',
-          color: Colors.white,
-          fontSize: 18,
-          fontWeight: FontWeight.w700,
-          letterSpacing: -0.3,
+        centerTitle: false,
+        titleTextStyle: GoogleFonts.plusJakartaSans(
+          color: primary,
+          fontSize: 20,
+          fontWeight: FontWeight.w800,
+          letterSpacing: -1.0,
         ),
-        iconTheme: IconThemeData(color: Colors.white.withOpacity(0.9)),
+        iconTheme: const IconThemeData(color: primary),
       ),
 
-      // Cards — Glassmorphism-lite with subtle border
+      // Cards
       cardTheme: CardThemeData(
+        color: surfaceAccent,
         elevation: 0,
-        shadowColor: Colors.transparent,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-          side: BorderSide(color: Colors.grey.withOpacity(0.08)),
+          borderRadius: BorderRadius.circular(8.0),
+          side: const BorderSide(color: Color(0xFFE5E7EB), width: 1.0),
         ),
-        color: Colors.white,
-        surfaceTintColor: Colors.transparent,
+        margin: EdgeInsets.zero,
       ),
 
       // Elevated Button
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: maroon,
+          backgroundColor: primary,
           foregroundColor: Colors.white,
           elevation: 0,
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-          textStyle: const TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 14, letterSpacing: 0.2),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          textStyle: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700),
         ),
       ),
 
       // Filled Button
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
-          backgroundColor: maroon,
+          backgroundColor: primary,
           foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-          textStyle: const TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w700, fontSize: 15),
+          elevation: 0,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          textStyle: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700),
         ),
       ),
 
-      // Input fields — Softer, rounded
+      // Outlined Button
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: primary,
+          side: const BorderSide(color: primary, width: 1.5),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          textStyle: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700),
+        ),
+      ),
+
+      // Input fields
       inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: surfaceAccent,
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: slate200),
+          borderRadius: BorderRadius.circular(8.0),
+          borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: slate200),
+          borderRadius: BorderRadius.circular(8.0),
+          borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: maroon, width: 2),
+          borderRadius: BorderRadius.circular(8.0),
+          borderSide: const BorderSide(color: primary, width: 2.0),
         ),
-        filled: true,
-        fillColor: const Color(0xFFFAF8F6),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
-        labelStyle: TextStyle(color: slate500, fontFamily: 'Inter'),
-        hintStyle: TextStyle(color: slate500.withOpacity(0.5), fontFamily: 'Inter', fontSize: 14),
-        prefixIconColor: slate500,
+        labelStyle: GoogleFonts.plusJakartaSans(color: Colors.black54),
+        hintStyle: GoogleFonts.plusJakartaSans(color: Colors.black38),
       ),
 
-      // Bottom Nav — Clean modern
-      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-        backgroundColor: Colors.white,
-        selectedItemColor: maroon,
-        unselectedItemColor: slate500,
-        selectedLabelStyle: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w700, fontSize: 11),
-        unselectedLabelStyle: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w500, fontSize: 11),
+      // Bottom Nav
+      bottomNavigationBarTheme: BottomNavigationBarThemeData(
+        backgroundColor: background,
+        selectedItemColor: primary,
+        unselectedItemColor: Colors.black54,
+        selectedLabelStyle:
+            GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w800),
+        unselectedLabelStyle:
+            GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w500),
         elevation: 0,
         type: BottomNavigationBarType.fixed,
       ),
 
       // FloatingActionButton
-      floatingActionButtonTheme: const FloatingActionButtonThemeData(
-        backgroundColor: maroon,
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: primary,
         foregroundColor: Colors.white,
-        elevation: 4,
-        shape: StadiumBorder(),
+        elevation: 0,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
       ),
 
       // Chip
       chipTheme: ChipThemeData(
-        backgroundColor: maroonSurface,
-        labelStyle: const TextStyle(fontFamily: 'Inter', color: maroon, fontWeight: FontWeight.w600, fontSize: 12),
-        side: BorderSide(color: maroon.withOpacity(0.12)),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        padding: const EdgeInsets.symmetric(horizontal: 4),
+        backgroundColor: surfaceAccent,
+        labelStyle: GoogleFonts.plusJakartaSans(
+            color: primary, fontWeight: FontWeight.w600),
+        side: const BorderSide(color: Color(0xFFE5E7EB)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
       ),
 
       // Divider
-      dividerTheme: DividerThemeData(color: slate200, thickness: 1),
+      dividerTheme: const DividerThemeData(
+          color: Color(0xFFE5E7EB), thickness: 1, space: 1),
 
-      // Dialog — Rounded modern
+      // Dialog
       dialogTheme: DialogThemeData(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        surfaceTintColor: Colors.transparent,
-      ),
-
-      // Snackbar
-      snackBarTheme: SnackBarThemeData(
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        backgroundColor: background,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+        elevation: 0,
+        titleTextStyle: GoogleFonts.plusJakartaSans(
+          fontWeight: FontWeight.w800,
+          letterSpacing: -1.0,
+          color: bodyText,
+          fontSize: 20,
+        ),
+        contentTextStyle: GoogleFonts.plusJakartaSans(color: bodyText),
       ),
     );
   }
 
-  // Helper: gradient decoration for headers
-  static BoxDecoration get headerGradient => const BoxDecoration(
-    gradient: LinearGradient(
-      colors: [Color(0xFF3D0C0C), Color(0xFF8B1A1A), Color(0xFFAE3030)],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-    ),
-  );
-
-  // Modern card decoration with soft shadow
   static BoxDecoration get modernCard => BoxDecoration(
-    color: Colors.white,
-    borderRadius: BorderRadius.circular(20),
-    border: Border.all(color: Colors.grey.withOpacity(0.06)),
-    boxShadow: [
-      BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 16, offset: const Offset(0, 4)),
-      BoxShadow(color: maroon.withOpacity(0.02), blurRadius: 8, offset: const Offset(0, 2)),
-    ],
-  );
+        color: surfaceAccent,
+        borderRadius: BorderRadius.circular(8.0),
+        border: Border.all(color: const Color(0xFFE5E7EB), width: 1.0),
+      );
 
-  // Glass card decoration
+  static BoxDecoration get headerGradient => const BoxDecoration(
+        color: primary,
+      );
+
   static BoxDecoration get glassCard => BoxDecoration(
-    color: Colors.white.withOpacity(0.85),
-    borderRadius: BorderRadius.circular(20),
-    border: Border.all(color: Colors.white.withOpacity(0.3)),
-    boxShadow: [
-      BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 16, offset: const Offset(0, 6)),
-    ],
-  );
+        color: surfaceAccent,
+        borderRadius: BorderRadius.circular(8.0),
+        border: Border.all(color: const Color(0xFFE5E7EB), width: 1.0),
+      );
 
   // Status colors
   static Color statusColor(String status) {
-    switch (status) {
-      case 'disetujui': return emerald;
-      case 'ditolak': return const Color(0xFFDC2626);
-      case 'pending': return amber;
-      default: return slate500;
+    switch (status.toLowerCase()) {
+      case 'disetujui':
+        return const Color(0xFF10B981); // emerald
+      case 'ditolak':
+        return const Color(0xFFDC2626); // red
+      case 'pending':
+        return const Color(0xFFF59E0B); // amber
+      default:
+        return Colors.black54;
     }
   }
 
   static IconData statusIcon(String status) {
-    switch (status) {
-      case 'disetujui': return Icons.check_circle;
-      case 'ditolak': return Icons.cancel;
-      case 'pending': return Icons.hourglass_top;
-      default: return Icons.circle;
+    switch (status.toLowerCase()) {
+      case 'disetujui':
+        return Icons.check_circle_outline;
+      case 'ditolak':
+        return Icons.highlight_off;
+      case 'pending':
+        return Icons.hourglass_empty;
+      default:
+        return Icons.info_outline;
     }
   }
 }

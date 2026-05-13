@@ -62,7 +62,8 @@ class ModernEmptyState extends StatelessWidget {
                 color: AppTheme.maroonSurface,
                 shape: BoxShape.circle,
               ),
-              child: Icon(icon, size: 64, color: AppTheme.maroon.withOpacity(0.5)),
+              child:
+                  Icon(icon, size: 64, color: AppTheme.maroon.withOpacity(0.5)),
             ),
             const SizedBox(height: 24),
             Text(
@@ -92,11 +93,14 @@ class ModernEmptyState extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppTheme.maroon,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14)),
                 ),
                 icon: const Icon(Icons.add_rounded, size: 18),
-                label: Text(actionLabel!, style: const TextStyle(fontWeight: FontWeight.w700)),
+                label: Text(actionLabel!,
+                    style: const TextStyle(fontWeight: FontWeight.w700)),
               ),
             ],
           ],
@@ -119,7 +123,9 @@ void showStnkPhotoDialog(BuildContext context, String path) {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('Foto STNK', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
+                const Text('Foto STNK',
+                    style:
+                        TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
                 IconButton(
                   icon: const Icon(Icons.close_rounded),
                   onPressed: () => Navigator.pop(ctx),
@@ -130,7 +136,9 @@ void showStnkPhotoDialog(BuildContext context, String path) {
             ),
           ),
           ClipRRect(
-            borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(24), bottomRight: Radius.circular(24)),
+            borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(24),
+                bottomRight: Radius.circular(24)),
             child: Image.network(
               '${AppConstants.uploadBaseUrl}$path',
               fit: BoxFit.contain,
@@ -139,9 +147,11 @@ void showStnkPhotoDialog(BuildContext context, String path) {
                 color: Colors.grey[100],
                 child: const Column(
                   children: [
-                    Icon(Icons.broken_image_rounded, size: 48, color: Colors.grey),
+                    Icon(Icons.broken_image_rounded,
+                        size: 48, color: Colors.grey),
                     SizedBox(height: 16),
-                    Text('Gagal memuat gambar', style: TextStyle(color: Colors.grey)),
+                    Text('Gagal memuat gambar',
+                        style: TextStyle(color: Colors.grey)),
                   ],
                 ),
               ),

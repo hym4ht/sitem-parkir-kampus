@@ -27,15 +27,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
     final role = prefs.getString('role');
     final nama = prefs.getString('user_nama');
     final nimNpp = prefs.getString('user_nim_npp');
-    
+
     if (role != null) {
-      state = AuthState(
-        role: role, 
-        user: {
-          'nama': nama ?? '',
-          'nim_npp': nimNpp ?? '',
-        }
-      );
+      state = AuthState(role: role, user: {
+        'nama': nama ?? '',
+        'nim_npp': nimNpp ?? '',
+      });
     }
   }
 
@@ -43,32 +40,32 @@ class AuthNotifier extends StateNotifier<AuthState> {
     state = AuthState(isLoading: true);
     try {
       final dio = ref.read(dioProvider);
-      
+
       // Sending URL encoded form data (OAuth2 Password Bearer requirement)
-      final response = await dio.post('auth/login', data: {
-        'username': nimNpp,
-        'password': password,
-      }, options: Options(contentType: Headers.formUrlEncodedContentType));
-      
+      final response = await dio.post('auth/login',
+          data: {
+            'username': nimNpp,
+            'password': password,
+          },
+          options: Options(contentType: Headers.formUrlEncodedContentType));
+
       final token = response.data['access_token'];
       final role = response.data['role'];
       final nama = response.data['nama'];
       final nim = response.data['nim_npp'];
-      
+
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('access_token', token);
       await prefs.setString('role', role);
       await prefs.setString('user_nama', nama);
       await prefs.setString('user_nim_npp', nim);
-      
+
       state = AuthState(
-        isLoading: false, 
-        role: role, 
-        user: {'nama': nama, 'nim_npp': nim}
-      );
+          isLoading: false, role: role, user: {'nama': nama, 'nim_npp': nim});
       return true;
     } on DioException catch (e) {
-      state = AuthState(isLoading: false, error: e.response?.data['detail'] ?? e.message);
+      state = AuthState(
+          isLoading: false, error: e.response?.data['detail'] ?? e.message);
       return false;
     } catch (e) {
       state = AuthState(isLoading: false, error: e.toString());
