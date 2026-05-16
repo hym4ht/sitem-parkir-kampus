@@ -13,13 +13,13 @@ http://127.0.0.1:8000
 Deploy VPS contoh:
 
 ```bash
-http://43.133.155.101:8088
+https://parkirkampus.my.id
 ```
 
 Gunakan variabel agar contoh curl lebih ringkas:
 
 ```bash
-BASE_URL="http://43.133.155.101:8088"
+BASE_URL="https://parkirkampus.my.id"
 ```
 
 ## Autentikasi
@@ -64,6 +64,7 @@ Nilai yang umum dipakai:
 | Method | Endpoint | Auth | Keterangan |
 |---|---|---|---|
 | GET | `/` | Public | Health check API |
+| GET | `/health/db` | Public | Cek koneksi database |
 | GET | `/uploads/{path}` | Public | Akses file upload, termasuk foto STNK |
 | POST | `/api/auth/login` | Public | Login dan mendapatkan JWT |
 | GET | `/api/auth/me` | Bearer token | Profil user login |
@@ -157,6 +158,27 @@ Curl:
 
 ```bash
 curl "$BASE_URL/"
+```
+
+### GET `/health/db`
+
+Cek koneksi database dari backend.
+
+Response sukses:
+
+```json
+{
+  "status": "success",
+  "database": "connected"
+}
+```
+
+Jika endpoint ini mengembalikan `503`, service FastAPI hidup tetapi database tidak bisa diakses. Cek `DATABASE_URL`, service MySQL, nama database, tabel, dan user/password database di server.
+
+Curl:
+
+```bash
+curl "$BASE_URL/health/db"
 ```
 
 ### GET `/uploads/{path}`
@@ -1084,7 +1106,7 @@ Channel live monitor petugas. Backend mengirim event dari scan IoT, emergency ac
 URL contoh:
 
 ```text
-ws://43.133.155.101:8088/api/gate/monitor/live
+wss://parkirkampus.my.id/api/gate/monitor/live
 ```
 
 Ping:
@@ -1124,7 +1146,7 @@ Channel notifikasi request akses manual dari mahasiswa ke petugas.
 URL contoh:
 
 ```text
-ws://43.133.155.101:8088/api/gate/petugas/notifications
+wss://parkirkampus.my.id/api/gate/petugas/notifications
 ```
 
 Event contoh:
@@ -1146,7 +1168,7 @@ Event contoh:
 Set base URL:
 
 ```bash
-BASE_URL="http://43.133.155.101:8088"
+BASE_URL="https://parkirkampus.my.id"
 ```
 
 Seed database jika kosong:
@@ -1343,3 +1365,32 @@ curl -s -X POST "$BASE_URL/api/gate/dual-validate" -H "Content-Type: application
 - Endpoint IoT `/api/gate/scan` sebaiknya ditambah API key atau signature sebelum dipakai di produksi.
 - Jika memakai domain, letakkan backend di belakang Nginx dan HTTPS.
 - Untuk WebSocket di belakang Nginx, pastikan header `Upgrade` dan `Connection` dikonfigurasi.
+- Jika `/` dan `/docs` hidup tetapi `/api/auth/login` mengembalikan `503` atau sebelumnya `500`, berarti request sudah sampai backend tetapi koneksi/query database gagal. Jalankan `curl "$BASE_URL/health/db"` dan cek log service backend.
+
+## Debug Docker VPS
+
+Jika backend dideploy dalam Docker, jangan pakai `localhost` untuk host MySQL kecuali MySQL berjalan di container yang sama. Di Docker Compose, pakai nama service database, misalnya:
+
+```env
+DATABASE_URL=mysql+pymysql://root:password_mysql@mysql:3306/smart_parking_db
+```
+
+Contoh pengecekan dari VPS:
+
+```bash
+docker ps
+docker logs --tail=100 <nama_container_backend>
+docker exec -it <nama_container_backend> printenv DATABASE_URL
+docker exec -it <nama_container_backend> python debug_db.py
+```
+
+Jika `python debug_db.py` menampilkan:
+
+| Output | Arti | Tindakan |
+|---|---|---|
+| `DNS/host tidak bisa resolve` | Host DB salah, misalnya service bukan `mysql` | Samakan host di `DATABASE_URL` dengan nama service/container DB |
+| `TCP connect ... gagal` | MySQL tidak reachable dari backend | Pastikan DB container hidup dan satu network Docker |
+| `Access denied` | User/password DB salah | Sesuaikan user/password di `DATABASE_URL` |
+| `Unknown database` | Database belum dibuat | Buat `smart_parking_db` atau jalankan init DB |
+| `Table users belum ada` | Koneksi benar, tabel belum ada | Restart backend agar `create_all` jalan, lalu cek ulang |
+| `Seed users belum ada` | Tabel ada tapi akun dummy kosong | Jalankan `docker exec -it <nama_container_backend> python seed.py` |

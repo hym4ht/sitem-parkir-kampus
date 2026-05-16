@@ -3,9 +3,12 @@ import asyncio
 from datetime import datetime, timedelta, timezone
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
+from sqlalchemy import text
+from sqlalchemy.exc import SQLAlchemyError
 from database import engine, Base, SessionLocal
 import models
 
@@ -53,6 +56,16 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="Smart Campus Parking System API", version="1.0.0", lifespan=lifespan)
 
+@app.exception_handler(SQLAlchemyError)
+async def database_exception_handler(request: Request, exc: SQLAlchemyError):
+    print(f"[DB] Error while handling {request.method} {request.url.path}: {exc}")
+    return JSONResponse(
+        status_code=503,
+        content={
+            "detail": "Database tidak bisa diakses. Cek DATABASE_URL, service MySQL, dan tabel database."
+        },
+    )
+
 # Setup CORS for the Flutter application
 app.add_middleware(
     CORSMiddleware,
@@ -73,6 +86,19 @@ def read_root():
         "status": "success",
         "message": "Welcome to Smart Campus Parking System API"
     }
+
+@app.get("/health/db")
+def read_db_health():
+    try:
+        with engine.connect() as connection:
+            connection.execute(text("SELECT 1"))
+        return {"status": "success", "database": "connected"}
+    except SQLAlchemyError as exc:
+        print(f"[DB] Health check failed: {exc}")
+        raise HTTPException(
+            status_code=503,
+            detail="Database tidak bisa diakses. Cek DATABASE_URL, service MySQL, dan tabel database.",
+        )
 
 from routers import auth, admin, mahasiswa, petugas, iot
 
