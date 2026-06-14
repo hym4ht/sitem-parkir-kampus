@@ -385,6 +385,14 @@ class _LiveMonitorTabState extends ConsumerState<LiveMonitorTab> {
   String _cameraType = 'ip_camera';
   final _cameraController = WebCameraController();
 
+  String getStreamUrl() {
+    if (_cameraType == 'ip_camera' && _cameraUrl != null && _cameraUrl!.isNotEmpty) {
+      final encodedUrl = Uri.encodeComponent(_cameraUrl!);
+      return '${AppConstants.baseUrl}gate/camera/stream?camera_url=$encodedUrl';
+    }
+    return '${AppConstants.baseUrl}gate/camera/stream';
+  }
+
   @override
   void initState() {
     super.initState();
@@ -965,6 +973,300 @@ class _LiveMonitorTabState extends ConsumerState<LiveMonitorTab> {
     }
   }
 
+  Future<void> _captureAndScanRtspCamera() async {
+    final rfidCtrl = TextEditingController(text: 'RFID_BUDI_123');
+    VoidCallback? dialogListener;
+    rfidCtrl.addListener(() {
+      if (dialogListener != null) {
+        dialogListener!();
+      }
+    });
+
+    try {
+      // Show dialog to choose RFID card & Gate Type
+      String gateType = 'masuk';
+      String gateId = 'GATE_MASUK_1';
+
+      if (!mounted) return;
+
+      bool confirmed = await showDialog<bool>(
+        context: context,
+        builder: (ctx) => StatefulBuilder(
+          builder: (context, setStateDialog) {
+            dialogListener = () {
+              if (mounted) setStateDialog(() {});
+            };
+            return AlertDialog(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              title: Row(
+                children: const [
+                  Icon(IconlyLight.scan, color: AppTheme.maroon),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: Text('Scan Plat via RTSP'),
+                  ),
+                ],
+              ),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (_cameraUrl != null)
+                      Center(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: SizedBox(
+                            height: 120,
+                            width: 180,
+                            child: WebMjpegViewer(streamUrl: getStreamUrl()),
+                          ),
+                        ),
+                      ),
+                    const SizedBox(height: 16),
+                    const Text('Pilih RFID (Simulasi Kartu):', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                    const SizedBox(height: 8),
+                    DropdownButtonFormField<String>(
+                      value: (rfidCtrl.text == 'RFID_BUDI_123' || rfidCtrl.text == 'RFID_SITI_456') ? rfidCtrl.text : 'custom',
+                      isExpanded: true,
+                      items: const [
+                        DropdownMenuItem(value: 'RFID_BUDI_123', child: Text('Budi Santoso (RFID_BUDI_123)')),
+                        DropdownMenuItem(value: 'RFID_SITI_456', child: Text('Siti Aminah (RFID_SITI_456)')),
+                        DropdownMenuItem(value: 'custom', child: Text('Manual / Custom UID')),
+                      ],
+                      onChanged: (val) {
+                        if (val != null) {
+                          setStateDialog(() {
+                            if (val != 'custom') {
+                              rfidCtrl.text = val;
+                            } else {
+                              rfidCtrl.text = '';
+                            }
+                          });
+                        }
+                      },
+                      decoration: InputDecoration(
+                        prefixIcon: const Icon(Icons.nfc_rounded, size: 20),
+                        filled: true,
+                        fillColor: AppTheme.slate50,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: AppTheme.slate200),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: AppTheme.slate200),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: AppTheme.maroon, width: 1.5),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    TextField(
+                      controller: rfidCtrl,
+                      decoration: InputDecoration(
+                        labelText: 'UID RFID',
+                        hintText: 'Masukkan UID RFID',
+                        prefixIcon: const Icon(Icons.credit_card_rounded, size: 20),
+                        filled: true,
+                        fillColor: AppTheme.slate50,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: AppTheme.slate200),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: AppTheme.slate200),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: AppTheme.maroon, width: 1.5),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    const Text('Gerbang:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: RadioListTile<String>(
+                            title: const Text('Masuk', style: TextStyle(fontSize: 12)),
+                            value: 'masuk',
+                            groupValue: gateType,
+                            activeColor: AppTheme.maroon,
+                            onChanged: (val) {
+                              setStateDialog(() {
+                                gateType = val!;
+                                gateId = 'GATE_MASUK_1';
+                              });
+                            },
+                            contentPadding: EdgeInsets.zero,
+                          ),
+                        ),
+                        Expanded(
+                          child: RadioListTile<String>(
+                            title: const Text('Keluar', style: TextStyle(fontSize: 12)),
+                            value: 'keluar',
+                            groupValue: gateType,
+                            activeColor: AppTheme.maroon,
+                            onChanged: (val) {
+                              setStateDialog(() {
+                                gateType = val!;
+                                gateId = 'GATE_KELUAR_1';
+                              });
+                            },
+                            contentPadding: EdgeInsets.zero,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx, false),
+                  style: TextButton.styleFrom(foregroundColor: AppTheme.slate500),
+                  child: const Text('Batal', style: TextStyle(fontWeight: FontWeight.w600)),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.maroon,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  ),
+                  onPressed: () {
+                    if (rfidCtrl.text.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('UID RFID tidak boleh kosong')),
+                      );
+                      return;
+                    }
+                    Navigator.pop(ctx, true);
+                  },
+                  child: const Text('Scan Plat', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                ),
+              ],
+            );
+          },
+        ),
+      ) ?? false;
+
+      if (confirmed && mounted) {
+        // Show loading dialog
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (ctx) => const Center(
+            child: Card(
+              child: Padding(
+                padding: EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CircularProgressIndicator(color: AppTheme.maroon),
+                    SizedBox(height: 16),
+                    Text('Meminta capture & memvalidasi...', style: TextStyle(fontWeight: FontWeight.bold)),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+
+        try {
+          final dio = ref.read(dioProvider);
+
+          final response = await dio.post(
+            'gate/capture-validate',
+            data: {
+              'rfid_uid': rfidCtrl.text,
+              'gate_type': gateType,
+              'gate_id': gateId,
+              'camera_url': _cameraUrl,
+            },
+          );
+
+          if (mounted) {
+            Navigator.pop(context); // Pop loading dialog
+            
+            final action = response.data['action'] ?? 'keep_closed';
+            final message = response.data['message'] ?? '';
+            final detail = response.data['validation_detail'] ?? '';
+            final studentName = response.data['student_name'];
+            final plateNumber = response.data['plate_number'];
+
+            showDialog(
+              context: context,
+              builder: (ctx) => AlertDialog(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                title: Row(
+                  children: [
+                    Icon(
+                      action == 'open_gate' ? Icons.check_circle_rounded : Icons.cancel_rounded,
+                      color: action == 'open_gate' ? Colors.green : Colors.red,
+                      size: 28,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        action == 'open_gate' ? 'Validasi Berhasil' : 'Akses Ditolak',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (studentName != null) ...[
+                      Text('Mahasiswa: $studentName', style: const TextStyle(fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 4),
+                    ],
+                    if (plateNumber != null) ...[
+                      Text('Plat: $plateNumber', style: const TextStyle(fontFamily: 'Courier', fontWeight: FontWeight.bold, fontSize: 16)),
+                      const SizedBox(height: 8),
+                    ],
+                    Text('Pesan: $message'),
+                    const SizedBox(height: 4),
+                    Text('Detail: $detail', style: const TextStyle(color: Colors.grey, fontSize: 11)),
+                  ],
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(ctx),
+                    child: const Text('OK'),
+                  ),
+                ],
+              ),
+            );
+
+            // Trigger global refresh
+            ref.read(refreshTriggerProvider.notifier).state++;
+          }
+        } catch (e) {
+          if (mounted) {
+            Navigator.pop(context); // Pop loading dialog
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Gagal: $e'),
+                backgroundColor: AppTheme.maroon,
+              ),
+            );
+          }
+        }
+      }
+    } finally {
+      rfidCtrl.dispose();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final chartAsync = ref.watch(activityChartProvider);
@@ -1029,9 +1331,11 @@ class _LiveMonitorTabState extends ConsumerState<LiveMonitorTab> {
                             ),
                           ),
                           const SizedBox(width: 8),
-                          if (_showCamera && _cameraType == 'device_camera') ...[
+                          if (_showCamera) ...[
                             GestureDetector(
-                              onTap: _captureAndScanDeviceCamera,
+                              onTap: _cameraType == 'device_camera'
+                                  ? _captureAndScanDeviceCamera
+                                  : _captureAndScanRtspCamera,
                               child: Container(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 12, vertical: 5),
@@ -1102,7 +1406,7 @@ class _LiveMonitorTabState extends ConsumerState<LiveMonitorTab> {
                                   bottomRight: Radius.circular(20)),
                               child: _cameraType == 'device_camera'
                                   ? WebCameraViewer(controller: _cameraController)
-                                  : WebMjpegViewer(streamUrl: _cameraUrl!),
+                                  : WebMjpegViewer(streamUrl: getStreamUrl()),
                             )
                           : const Center(
                               child: Column(

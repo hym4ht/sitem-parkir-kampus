@@ -22,6 +22,7 @@ import cv2
 import numpy as np
 from datetime import datetime, timezone
 from fastapi import FastAPI, File, UploadFile, Form
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from typing import Optional
 import requests
@@ -366,6 +367,53 @@ def _process_ml_inference(frame) -> tuple[str, float]:
                             max_confidence = conf
                             
     return detected_plate, max_confidence
+
+def generate_rtsp_frames(camera_url: Optional[str] = None):
+    url = camera_url or os.getenv("CAMERA_URL") or "0"
+    if isinstance(url, str) and url.isdigit():
+        video_source = int(url)
+    else:
+        video_source = url
+
+    print(f"[ML Stream] Membuka kamera/stream dari: {video_source}")
+    cap = cv2.VideoCapture(video_source)
+    if not cap.isOpened():
+        print(f"[ML Stream Error] Gagal membuka stream dari {video_source}")
+        return
+
+    try:
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                # Coba delay sebentar jika frame kosong / buffering
+                time.sleep(0.1)
+                continue
+
+            ret, buffer = cv2.imencode('.jpg', frame)
+            if not ret:
+                continue
+
+            frame_bytes = buffer.tobytes()
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
+            
+            # Rate limit to ~20-25 FPS to reduce CPU/network usage
+            time.sleep(0.04)
+    except Exception as e:
+        print(f"[ML Stream Error] Terjadi kesalahan saat streaming: {e}")
+    finally:
+        print(f"[ML Stream] Menutup kamera/stream dari: {video_source}")
+        cap.release()
+
+@app.get("/api/stream")
+def get_camera_stream(camera_url: Optional[str] = None):
+    """
+    Endpoint untuk melakukan proxy/streaming kamera RTSP ke HTTP MJPEG.
+    """
+    return StreamingResponse(
+        generate_rtsp_frames(camera_url),
+        media_type="multipart/x-mixed-replace; boundary=frame"
+    )
 
 @app.get("/health")
 async def health_check():

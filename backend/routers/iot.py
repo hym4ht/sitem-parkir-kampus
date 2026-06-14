@@ -14,6 +14,7 @@ Alur Validasi Ganda:
 """
 
 from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisconnect, File, UploadFile, Form
+from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 from datetime import datetime, timezone
 import asyncio
@@ -813,3 +814,33 @@ def get_parking_capacity(db: Session = Depends(get_db)):
         "parked": parked_count,
         "available": max(0, total_capacity - parked_count)
     }
+
+# ═══════════════════════════════════════════════════════════════════
+#  ENDPOINT: Camera Stream Proxy (RTSP to HTTP MJPEG)
+# ═══════════════════════════════════════════════════════════════════
+
+@router.get("/camera/stream")
+async def proxy_camera_stream(camera_url: str | None = None):
+    """
+    Proxy endpoint to stream camera (RTSP/HTTP/Webcam) through ML Service.
+    Reads default CAMERA_URL from backend settings if not provided.
+    """
+    url_to_stream = camera_url or settings.CAMERA_URL
+    ml_stream_url = f"{settings.ANPR_SERVICE_URL.rstrip('/')}/api/stream"
+    
+    async def stream_generator():
+        try:
+            async with httpx.AsyncClient(timeout=None) as client:
+                async with client.stream("GET", ml_stream_url, params={"camera_url": url_to_stream}) as response:
+                    if response.status_code != 200:
+                        logger.error(f"[Backend Stream] ML service returned status {response.status_code}")
+                        return
+                    async for chunk in response.aiter_bytes():
+                        yield chunk
+        except Exception as e:
+            logger.error(f"[Backend Stream Error] Proxy connection failed: {e}")
+
+    return StreamingResponse(
+        stream_generator(),
+        media_type="multipart/x-mixed-replace; boundary=frame"
+    )
